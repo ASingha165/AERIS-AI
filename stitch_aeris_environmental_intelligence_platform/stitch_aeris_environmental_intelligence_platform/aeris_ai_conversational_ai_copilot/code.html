@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Space+Grotesk:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0c1321","tertiary-container":"#bacef0","on-error-container":"#ffdad6","on-secondary-fixed":"#001f2a","surface-container-low":"#151c29","primary":"#85ffd4","on-tertiary-container":"#445875","on-surface":"#dce2f5","on-secondary-fixed-variant":"#004d64","on-primary-fixed":"#002117","primary-container":"#37e6b5","tertiary-fixed-dim":"#b4c8e9","outline-variant":"#3b4a43","surface-variant":"#2e3543","surface":"#0c1321","primary-fixed":"#57fdca","on-tertiary":"#1d314c","surface-bright":"#323948","on-primary-container":"#00634b","primary-fixed-dim":"#2be0af","secondary-container":"#019cc9","surface-tint":"#2be0af","inverse-surface":"#dce2f5","on-primary":"#003829","outline":"#85948c","error":"#ffb4ab","surface-container":"#19202d","on-secondary":"#003546","tertiary-fixed":"#d4e3ff","secondary-fixed":"#bee9ff","on-primary-fixed-variant":"#00513d","on-secondary-container":"#002e3d","secondary":"#69d3ff","surface-container-lowest":"#070e1b","on-background":"#dce2f5","surface-container-highest":"#2e3543","inverse-primary":"#006c52","inverse-on-surface":"#2a303f","on-tertiary-fixed":"#051c36","secondary-fixed-dim":"#69d3ff","tertiary":"#dfe9ff","on-error":"#690005","on-tertiary-fixed-variant":"#344864","on-surface-variant":"#bacac1","error-container":"#93000a","surface-container-high":"#232a38","surface-dim":"#0c1321"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"space-sm":"0.5rem","space-md":"1rem","space-lg":"1.5rem","space-xs":"0.25rem","margin-lg":"2rem","margin":"1rem","space-xl":"2.5rem","margin-md":"1.5rem","gutter":"1rem","gutter-lg":"1.5rem"},fontFamily:{"body-sm":["Geist"],"label-mono":["Geist"],"headline-md":["Space Grotesk"],"display-xl-mobile":["Space Grotesk"],"display-xl":["Space Grotesk"],"headline-sm":["Space Grotesk"],"body-lg":["Geist"],"label-caps":["Space Grotesk"],"display-lg":["Space Grotesk"],"metric-numeral":["Space Grotesk"],"body-md":["Geist"],"display-lg-mobile":["Space Grotesk"]},fontSize:{"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0.01em","fontWeight":"400"}],"label-mono":["11px",{"lineHeight":"14px","letterSpacing":"0.06em","fontWeight":"500"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"display-xl-mobile":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"display-xl":["56px",{"lineHeight":"64px","letterSpacing":"-0.03em","fontWeight":"700"}],"headline-sm":["18px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"600"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"label-caps":["10px",{"lineHeight":"12px","letterSpacing":"0.08em","fontWeight":"700"}],"display-lg":["40px",{"lineHeight":"48px","letterSpacing":"-0.02em","fontWeight":"600"}],"metric-numeral":["32px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"display-lg-mobile":["28px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"600"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-low/95 backdrop-blur-xl z-50 flex flex-col justify-between shadow-[0_8px_32px_0_rgba(4,8,16,0.45)]"><div class="flex flex-col"><div class="h-16 px-space-lg flex items-center justify-between gap-space-sm bg-surface-container-lowest/40"><div class="flex items-center gap-space-sm"><img alt="AERIS-AI Brand Mark" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrCG2VG3PCsPiN_LaKBQ7LvuWV41aVYE7gayDFYqxTcyC-3rtkYxnT-z_lj41VAAwncE8e5aSLUqHpw6H0-YI3dI3lEkWm9D9AIDIHo1AdSTROTB-aRZkeDQHnmq8shPHYh4CUkDswuzQ5nXdJyugy0KlfP_fc3sO0XMd6REy-ewupJX_HPILjDDe0C_uOpkqhXbThCjvMwA1GuVgIG0vYRoDEkxka1lsVefT8MJIcrv"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm tracking-tight text-on-surface font-bold leading-none">AERIS<span class="text-primary">-AI</span></span><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mt-0.5">Atmospheric Intel</span></div></div><span class="font-label-caps text-label-caps px-space-xs py-0.5 rounded-full bg-primary-container/20 text-primary-container font-bold">v2.4 Live</span></div><div class="px-space-md py-space-sm"><div class="px-space-sm py-space-xs flex items-center justify-between font-label-caps text-label-caps text-outline uppercase tracking-wider"><span>Command Telemetry</span><span class="flex h-1.5 w-1.5 rounded-full bg-primary animate-ping"></span></div></div><nav class="flex flex-col gap-space-xs px-space-md" data-active-classes="bg-primary-container text-on-primary-container font-bold rounded-lg shadow-[0_0_20px_rgba(55,230,181,0.2)]"><a class="group flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="overview" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-body-md text-body-md">Overview</span></div><span class="font-label-mono text-label-mono text-outline-variant group-hover:text-on-surface-variant">HUD</span></a><a aria-current="page" class="group flex items-center justify-between px-space-md py-space-sm transition-all bg-primary-container text-on-primary-container font-bold rounded-lg shadow-[0_0_20px_rgba(55,230,181,0.2)]" data-path="ai-copilot" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">smart_toy</span><span class="font-body-md text-body-md">AI Copilot</span></div><span class="font-label-caps text-label-caps px-space-xs py-0.5 rounded-full bg-secondary-container/30 text-secondary font-bold">GenAI</span></a><a class="group flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="daily-planner" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">calendar_today</span><span class="font-body-md text-body-md">Daily Planner</span></div></a><a class="group flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="my-household" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">group</span><span class="font-body-md text-body-md">My Household</span></div></a><a class="group flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="indoor-guardian" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">air_purifier_gen</span><span class="font-body-md text-body-md">Indoor Guardian</span></div><span class="h-2 w-2 rounded-full bg-primary"></span></a><a class="group flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="impact-explorer" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">eco</span><span class="font-body-md text-body-md">Impact Explorer</span></div></a><a class="group flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="settings" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">tune</span><span class="font-body-md text-body-md">Settings</span></div></a></nav></div><div class="p-space-md flex flex-col gap-space-sm bg-surface-container-lowest/50 m-space-md rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.25)]"><div class="flex items-center justify-between bg-surface-container-high/60 p-space-xs rounded-lg"><button class="flex-1 py-1 text-center font-label-caps text-label-caps rounded bg-primary-container text-on-primary-container font-bold" type="button">Kolkata (Primary)</button><button class="flex-1 py-1 text-center font-label-caps text-label-caps rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-colors" type="button">Mumbai</button></div><div class="flex items-center justify-between px-space-xs pt-space-xs"><div class="flex items-center gap-space-xs"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span></span><span class="font-label-mono text-label-mono text-on-surface-variant">142 Nodes Online</span></div><span class="font-label-mono text-label-mono text-secondary px-space-xs py-0.5 rounded bg-surface-container-highest/60">18ms</span></div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface-container-low/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.25)] z-40"><div class="h-16 w-full px-gutter-lg flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><img alt="AERIS-AI Brand Mark" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrCG2VG3PCsPiN_LaKBQ7LvuWV41aVYE7gayDFYqxTcyC-3rtkYxnT-z_lj41VAAwncE8e5aSLUqHpw6H0-YI3dI3lEkWm9D9AIDIHo1AdSTROTB-aRZkeDQHnmq8shPHYh4CUkDswuzQ5nXdJyugy0KlfP_fc3sO0XMd6REy-ewupJX_HPILjDDe0C_uOpkqhXbThCjvMwA1GuVgIG0vYRoDEkxka1lsVefT8MJIcrv"/><div class="flex items-center gap-space-xs px-space-md py-1.5 rounded-full bg-surface-container-high/70 hover:bg-surface-container-highest/80 transition-colors cursor-pointer"><span class="material-symbols-outlined text-[18px] text-primary">pin_drop</span><span class="font-headline-sm text-body-sm text-on-surface font-medium">Kolkata, WB — Park Street Ward 63</span><span class="material-symbols-outlined text-[16px] text-on-surface-variant">keyboard_arrow_down</span></div><div class="hidden xl:flex items-center gap-space-xs font-label-mono text-label-mono text-outline"><span class="h-1.5 w-1.5 rounded-full bg-secondary animate-pulse"></span><span>Illustrative Sensor Telemetry • Real-time Sync</span></div></div><div class="hidden md:flex items-center gap-space-xs px-space-md py-1 rounded-full bg-surface-container/60 shadow-inner"><span class="material-symbols-outlined text-[15px] text-secondary">update</span><span class="font-label-mono text-label-mono text-on-surface-variant">Updated 4m ago • CPCB/OpenAQ Source</span><button class="p-0.5 rounded-full hover:bg-surface-container-highest hover:text-on-surface text-on-surface-variant transition-colors" type="button"><span class="material-symbols-outlined text-[15px]">cached</span></button></div><div class="flex items-center gap-space-md"><div class="relative hidden lg:block w-72"><span class="material-symbols-outlined absolute left-space-md top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant">search</span><input class="w-full pl-9 pr-space-md py-1.5 rounded-full bg-surface-container-high/80 text-on-surface placeholder:text-outline-variant font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Search pollutants, locations..." type="text"/></div><button class="relative p-2 rounded-full hover:bg-surface-container-high hover:text-on-surface text-on-surface-variant transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1 right-1 h-4 w-4 rounded-full bg-error text-on-error font-label-caps text-[9px] font-bold flex items-center justify-center">1</span></button><div class="flex items-center gap-space-sm pl-space-sm cursor-pointer"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-primary/40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGAvgFEO4N8tDJFSsxrY8KTIQ2oNdDP2CWNy8Ss_6gaIVeafm9NCeuAkqzpQDwOWwY86_6hiohe1VLwuYN7ZpGhft_k9y3lZQi_nyllOgJJ7cuavqTE2ceqqwlYTIBrcfP9YW6-txFJ6r1-0NYjUB5tfDRQOaCm_8lu6M_B85a4nHc-1IfYM4OMs7e93qm-uVJg2WmkH032vUyxgSZg4fZHSJhwTZnMLSqzlWPRiA"/><div class="hidden sm:flex flex-col text-left"><span class="font-headline-sm text-body-sm text-on-surface font-semibold leading-tight">Dr. Priya Sen</span><span class="font-label-caps text-label-caps text-primary">Household Admin</span></div><span class="material-symbols-outlined text-[18px] text-on-surface-variant hidden sm:block">expand_more</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Interactive Ambient Atmospheric Canvas Backing -->
+<div class="relative w-full px-gutter-lg py-space-lg">
+<!-- Header Command Bar with Atmospheric Elevation -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md mb-space-lg">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs font-label-caps text-label-caps text-primary tracking-widest uppercase mb-1">
+<span class="inline-block w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(133,255,212,0.8)] animate-pulse"></span>
+<span>Orbital Telemetry Stream Active • Synced Session</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-on-surface tracking-tight font-bold">Ask AERIS.</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mt-1">Environmental intelligence for everyday decisions.</p>
+</div>
+<div class="flex items-center gap-space-sm self-start lg:self-auto">
+<div class="flex items-center gap-space-xs px-space-md py-1.5 rounded-full bg-surface-container-high/80 text-on-surface-variant text-body-sm font-label-mono shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">satellite_alt</span>
+<span>Sentinel-5P Overlay</span>
+<span class="mx-1 text-outline">•</span>
+<span class="text-primary font-bold">Realtime</span>
+</div>
+<button class="flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-all text-body-sm font-headline-sm shadow-sm cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">restart_alt</span>
+<span>Reset Thread</span>
+</button>
+</div>
+</div>
+<!-- 2-Column Command Center Architecture -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- LEFT COLUMN: Main Conversation Stream (~70% -> 8.5 Cols) -->
+<div class="lg:col-span-8 flex flex-col gap-space-md">
+<!-- Medical / Environmental Disclaimer Banner -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low/90 p-space-md shadow-md">
+<div class="flex items-start gap-space-md">
+<div class="p-2 rounded-lg bg-secondary-container/20 text-secondary flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">health_and_safety</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-caps text-label-caps text-secondary uppercase font-bold tracking-wider">Advisory Protocol</span>
+<span class="h-1 w-1 rounded-full bg-outline"></span>
+<span class="font-label-mono text-label-mono text-outline">WHO & CPCB Ground Rules</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+<strong class="text-on-surface font-headline-sm text-body-sm">Notice:</strong> AERIS provides environmental intelligence and micro-exposure mitigation guidance, not medical diagnosis or clinical treatment. Always cross-evaluate with personal pediatric advice.
+              </p>
+</div>
+</div>
+</div>
+<!-- Chat Conversation Stream -->
+<div class="flex flex-col gap-space-lg pt-space-xs pb-space-sm" id="chat-stream">
+<!-- Message 1: User Prompt -->
+<div class="flex items-start justify-end gap-space-sm pl-8">
+<div class="flex flex-col items-end max-w-xl">
+<div class="flex items-center gap-space-xs mb-1 font-label-mono text-label-mono text-outline">
+<span>Dr. Priya Sen</span>
+<span>•</span>
+<span>15:42</span>
+</div>
+<div class="rounded-2xl rounded-tr-none bg-surface-container-high p-space-md text-on-surface shadow-md">
+<p class="font-body-md text-body-md leading-relaxed">
+                  Should my 7-year-old daughter go for her outdoor football practice today at 4:30 PM in South Kolkata?
+                </p>
+</div>
+<div class="flex items-center gap-space-xs mt-1.5 text-outline font-label-mono text-label-mono">
+<span class="material-symbols-outlined text-[13px] text-primary">done_all</span>
+<span>Delivered to Atmospheric Engine</span>
+</div>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-primary-container flex-shrink-0 mt-4 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+</div>
+<!-- Message 2: AERIS Copilot Intelligent Diagnostic Response -->
+<div class="flex items-start gap-space-sm pr-2">
+<div class="w-9 h-9 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary flex-shrink-0 shadow-[0_0_15px_rgba(55,230,181,0.2)]">
+<span class="material-symbols-outlined text-[20px]">smart_toy</span>
+</div>
+<div class="flex-1 flex flex-col gap-space-sm">
+<!-- Confidence / Telemetry Status Pill -->
+<div class="flex flex-wrap items-center gap-space-xs">
+<span class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-full bg-primary/10 text-primary font-label-caps text-label-caps uppercase tracking-wider font-bold shadow-sm">
+<span class="h-1.5 w-1.5 rounded-full bg-primary animate-ping"></span>
+                  GenAI Analysis • Confidence: 92%
+                </span>
+<span class="inline-flex items-center gap-1 px-space-sm py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-mono text-label-mono">
+<span class="material-symbols-outlined text-[13px] text-secondary">child_care</span>
+                  Sensitive Child / Active Exertion
+                </span>
+<span class="inline-flex items-center gap-1 px-space-sm py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-mono text-label-mono">
+<span class="material-symbols-outlined text-[13px] text-primary">schedule</span>
+                  4:30 PM Window
+                </span>
+</div>
+<!-- Main Copilot Card -->
+<div class="rounded-2xl rounded-tl-none bg-surface-container-low p-space-lg shadow-xl relative overflow-hidden">
+<!-- Micro Highlight Bar Top Accent -->
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-transparent opacity-80"></div>
+<!-- 1. Short Strategic Recommendation -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest/80 mb-space-md shadow-sm">
+<div class="flex items-start gap-space-sm">
+<span class="text-xl">⚠️</span>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Conditional Outdoor Window</h4>
+<p class="font-body-md text-body-md text-on-surface mt-1">
+                        Better to <strong class="text-primary font-semibold">reschedule rigorous aerobic cardio</strong> or shift practice to the earlier window of <span class="text-secondary font-label-mono font-bold">2:00 PM – 3:45 PM</span> before steep evening particulate build-up sets in.
+                      </p>
+</div>
+</div>
+</div>
+<!-- Visual Projection Graph Widget -->
+<div class="rounded-xl bg-surface-container-high/40 p-space-md mb-space-md">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-caps text-label-caps text-outline uppercase tracking-wider font-bold">Projected Inhalation Exposure (South Kolkata Ward 63)</span>
+<span class="font-label-mono text-label-mono text-secondary">PM2.5 Trend (µg/m³)</span>
+</div>
+<div class="h-20 w-full relative flex items-end">
+<!-- Inline SVG Chart Under 2KB with theme colors -->
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 400 80">
+<defs>
+<lineargradient id="copilotGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#37e6b5" stop-opacity="0.35"></stop>
+<stop offset="100%" stop-color="#37e6b5" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,58 Q70,62 130,52 T250,22 T400,8 L400,80 L0,80 Z" fill="url(#copilotGradient)"></path>
+<path class="text-primary" d="M0,58 Q70,62 130,52 T250,22 T400,8" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+<!-- Indicator Point at Practice Time (4:30 PM / X=270) -->
+<circle class="fill-primary stroke-surface-container" cx="270" cy="20" r="4.5" stroke-width="2"></circle>
+<line class="text-secondary/50" stroke="currentColor" stroke-dasharray="3,3" stroke-width="1.5" x1="270" x2="270" y1="20" y2="80"></line>
+</svg>
+</div>
+<div class="flex justify-between items-center text-label-mono font-label-mono text-outline mt-2 pt-1 border-none">
+<span>14:00 (72 µg)</span>
+<span class="text-primary font-bold">16:30 Practice (134 µg • Alert)</span>
+<span>18:30 (158 µg)</span>
+<span>20:00 (185 µg)</span>
+</div>
+</div>
+<!-- 2. Environmental Reasoning -->
+<div class="mb-space-md">
+<div class="flex items-center gap-space-xs font-label-caps text-label-caps text-secondary uppercase font-bold tracking-wider mb-1.5">
+<span class="material-symbols-outlined text-[15px]">insights</span>
+<span>Atmospheric & Physiological Reasoning</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                    At 4:30 PM, Kolkata's boundary layer rapidly compresses as twilight approaches, with <strong class="text-on-surface">PM2.5 projected to climb from 78 µg/m³ to 134 µg/m³ (AQI ~172)</strong>. Children breathe <span class="text-primary font-semibold">50% more air per pound of body weight</span> during intense football drills compared to adults at rest, significantly escalating micro-particle alveolar deposition.
+                  </p>
+</div>
+<!-- 3. Practical Actionable Steps -->
+<div class="mb-space-md">
+<div class="flex items-center gap-space-xs font-label-caps text-label-caps text-primary uppercase font-bold tracking-wider mb-2">
+<span class="material-symbols-outlined text-[15px]">task_alt</span>
+<span>Prescribed Protocol Steps</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
+<div class="p-space-sm rounded-xl bg-surface-container-high/60 flex flex-col justify-between">
+<div class="flex items-center gap-space-xs mb-1">
+<span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary-container font-label-caps text-label-caps font-bold">P1</span>
+<span class="font-headline-sm text-body-sm text-on-surface font-semibold">Indoor Tactical</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Shift heavy aerobic cardio indoors, or keep outdoor practice to light static tactical setups.</p>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-container-high/60 flex flex-col justify-between">
+<div class="flex items-center gap-space-xs mb-1">
+<span class="px-1.5 py-0.5 rounded bg-secondary-container text-on-secondary-container font-label-caps text-label-caps font-bold">P2</span>
+<span class="font-headline-sm text-body-sm text-on-surface font-semibold">Airway Clearing</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Ensure post-practice saline gargle and warm hydration to clear upper respiratory surface irritants.</p>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-container-high/60 flex flex-col justify-between">
+<div class="flex items-center gap-space-xs mb-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-label-caps text-label-caps font-bold">P3</span>
+<span class="font-headline-sm text-body-sm text-on-surface font-semibold">Night HEPA</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Run her bedroom HEPA filtration at medium-high overnight to accelerate recovery lung clearance.</p>
+</div>
+</div>
+</div>
+<!-- 4. Data Sources Referenced -->
+<div class="pt-space-sm flex flex-wrap items-center gap-space-xs">
+<span class="font-label-mono text-label-mono text-outline uppercase">Referenced Ground Truth:</span>
+<a class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant hover:text-primary font-label-mono text-label-mono transition-colors" href="#">
+                    [OpenAQ Station #WB-KOL-04]
+                  </a>
+<a class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant hover:text-primary font-label-mono text-label-mono transition-colors" href="#">
+                    [IMD Micro-meteorology Model]
+                  </a>
+<a class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant hover:text-primary font-label-mono text-label-mono transition-colors" href="#">
+                    [WHO Pediatric Air Guidelines]
+                  </a>
+</div>
+</div>
+<!-- Message Interaction Feedback Strip -->
+<div class="flex items-center gap-space-md pl-2 text-outline font-label-mono text-label-mono">
+<button class="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[15px]">thumb_up</span> Helpful
+                </button>
+<button class="flex items-center gap-1 hover:text-error transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[15px]">thumb_down</span> Refine
+                </button>
+<button class="flex items-center gap-1 hover:text-secondary transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[15px]">content_copy</span> Copy Guidance
+                </button>
+<span class="text-outline-variant">•</span>
+<span>Generated in 242ms</span>
+</div>
+</div>
+</div>
+<!-- Message 3: Follow-Up User Question -->
+<div class="flex items-start justify-end gap-space-sm pl-8">
+<div class="flex flex-col items-end max-w-xl">
+<div class="flex items-center gap-space-xs mb-1 font-label-mono text-label-mono text-outline">
+<span>Dr. Priya Sen</span>
+<span>•</span>
+<span>15:45</span>
+</div>
+<div class="rounded-2xl rounded-tr-none bg-surface-container-high p-space-md text-on-surface shadow-md">
+<p class="font-body-md text-body-md leading-relaxed">
+                  What are the most effective immediate steps to lower bedroom PM2.5 without an expensive machine?
+                </p>
+</div>
+<div class="flex items-center gap-space-xs mt-1.5 text-outline font-label-mono text-label-mono">
+<span class="material-symbols-outlined text-[13px] text-primary">done_all</span>
+<span>Delivered</span>
+</div>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-primary-container flex-shrink-0 mt-4 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+</div>
+<!-- Message 4: AERIS Structured Mitigation Response -->
+<div class="flex items-start gap-space-sm pr-2">
+<div class="w-9 h-9 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary flex-shrink-0 shadow-[0_0_15px_rgba(55,230,181,0.2)]">
+<span class="material-symbols-outlined text-[20px]">smart_toy</span>
+</div>
+<div class="flex-1 flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-full bg-primary/10 text-primary font-label-caps text-label-caps uppercase tracking-wider font-bold">
+<span class="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                  Low-Cost Non-Machine Intervention • Efficacy ~42%
+                </span>
+</div>
+<!-- Main Copilot Guidance Card -->
+<div class="rounded-2xl rounded-tl-none bg-surface-container-low p-space-lg shadow-xl relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-secondary via-primary to-transparent opacity-80"></div>
+<div class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-sm">
+                  3 Zero-Cost Household Protocols for Bedroom PM2.5 Reduction
+                </div>
+<div class="flex flex-col gap-space-md">
+<!-- Step 1: Wet Mopping vs Dry Sweeping -->
+<div class="flex items-start gap-space-md p-space-md rounded-xl bg-surface-container-high/50">
+<div class="w-8 h-8 rounded-lg bg-primary-container/20 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">mop</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-body-lg text-on-surface font-semibold flex items-center gap-2">
+                        1. Wet Mopping Over Dry Sweeping
+                        <span class="px-2 py-0.5 rounded-full bg-primary/20 text-primary font-label-mono text-body-sm font-bold">Immediate -28% Particulates</span>
+</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 leading-relaxed">
+                        Dry brooms aerosolize settled micro-soot back into breathing zones for up to 4 hours. Use damp microfiber mopping once in the afternoon. Adding a capful of regular water conditioner creates surface tension that traps particles down to PM1.0.
+                      </p>
+</div>
+</div>
+<!-- Step 2: Draft Stoppers -->
+<div class="flex items-start gap-space-md p-space-md rounded-xl bg-surface-container-high/50">
+<div class="w-8 h-8 rounded-lg bg-secondary-container/20 text-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">door_sliding</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-body-lg text-on-surface font-semibold flex items-center gap-2">
+                        2. Perimeter Window Gap Sealing (DIY Draft Stoppers)
+                        <span class="px-2 py-0.5 rounded-full bg-secondary/20 text-secondary font-label-mono text-body-sm font-bold">Stops 70% Infiltration</span>
+</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 leading-relaxed">
+                        Kolkata winter soot infiltrates sliding track windows. Roll dense cotton towels or place inexpensive foam door-snakes along lower sills and between double glass sliders to suppress ambient draft seepage.
+                      </p>
+</div>
+</div>
+<!-- Step 3: Natural Ventilation Window -->
+<div class="flex items-start gap-space-md p-space-md rounded-xl bg-surface-container-high/50">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container/20 text-tertiary-fixed flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">air</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-body-lg text-on-surface font-semibold flex items-center gap-2">
+                        3. Synchronized Micro-Ventilation Window (1:30 PM - 3:30 PM)
+                        <span class="px-2 py-0.5 rounded-full bg-surface-bright text-on-surface font-label-mono text-body-sm">Prevents CO2 Stagnation</span>
+</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 leading-relaxed">
+                        Do not keep windows permanently sealed all day as indoor CO2 causes grogginess. Open opposite windows for strictly 20 minutes between 1:30 PM and 3:30 PM when solar heat lifts atmospheric inversion and ambient soot is at its daily nadir.
+                      </p>
+</div>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between">
+<span class="font-label-mono text-label-mono text-outline">Tested against Park Street meteorological baseline</span>
+<button class="text-primary hover:text-primary-fixed flex items-center gap-1 font-label-caps text-label-caps uppercase tracking-wider font-bold" type="button">
+<span>Export Checklist to PDF</span>
+<span class="material-symbols-outlined text-[14px]">download</span>
+</button>
+</div>
+</div>
+<!-- Message Interaction Feedback Strip -->
+<div class="flex items-center gap-space-md pl-2 text-outline font-label-mono text-label-mono">
+<button class="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[15px]">thumb_up</span> Helpful
+                </button>
+<button class="flex items-center gap-1 hover:text-error transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[15px]">thumb_down</span> Refine
+                </button>
+<span class="text-outline-variant">•</span>
+<span>Generated in 198ms</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Suggestion Chips Bar -->
+<div class="flex flex-col gap-space-xs mt-space-sm">
+<span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">Suggested Inquiries for South Kolkata</span>
+<div class="flex flex-wrap gap-space-xs" id="quick-chips">
+<button class="px-space-md py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-body-sm text-body-sm transition-all text-left flex items-center gap-1.5 shadow-sm hover:translate-y-[-1px] cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[15px] text-primary">directions_walk</span>
+<span>Should I go for a morning walk tomorrow?</span>
+</button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-body-sm text-body-sm transition-all text-left flex items-center gap-1.5 shadow-sm hover:translate-y-[-1px] cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[15px] text-secondary">savings</span>
+<span>How can I improve indoor air on a budget?</span>
+</button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-body-sm text-body-sm transition-all text-left flex items-center gap-1.5 shadow-sm hover:translate-y-[-1px] cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[15px] text-tertiary">masks</span>
+<span>Compare N95 vs surgical masks for PM2.5</span>
+</button>
+<button class="px-space-md py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-body-sm text-body-sm transition-all text-left flex items-center gap-1.5 shadow-sm hover:translate-y-[-1px] cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[15px] text-outline">ac_unit</span>
+<span>Kolkata winter pollution forecast</span>
+</button>
+</div>
+</div>
+<!-- Conversational Input Bar Dock -->
+<div class="p-space-sm rounded-2xl bg-surface-container-low shadow-2xl relative">
+<div class="flex items-center gap-space-sm bg-surface-container-lowest/80 rounded-xl px-space-md py-2.5">
+<button class="p-2 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer" title="Attach air monitor CSV or photo" type="button">
+<span class="material-symbols-outlined text-[20px]">attach_file</span>
+</button>
+<input class="flex-1 bg-transparent border-none text-on-surface placeholder:text-outline/70 font-body-md text-body-md focus:outline-none" id="copilot-input" placeholder="Ask anything about local air, family precautions, commute routes, or emissions..." type="text"/>
+<div class="flex items-center gap-space-xs">
+<button class="p-2 rounded-lg text-outline hover:text-secondary hover:bg-surface-container transition-colors cursor-pointer" title="Voice dictation" type="button">
+<span class="material-symbols-outlined text-[20px]">mic</span>
+</button>
+<!-- Glowing Mint Primary Action Button -->
+<button class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary-container text-on-primary-container font-bold hover:shadow-[0_0_20px_rgba(55,230,181,0.5)] active:scale-95 transition-all cursor-pointer" id="send-trigger" type="button">
+<span class="material-symbols-outlined text-[20px]">send</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between px-space-sm pt-2 text-outline font-label-mono text-label-mono">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-primary">verified</span>
+<span>AERIS Atmospheric Guard Active</span>
+</div>
+<span>Press Enter ↵ to dispatch query</span>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Real-Time Environmental Context Panel (~30% -> 4 Cols) -->
+<div class="lg:col-span-4 flex flex-col gap-space-md">
+<!-- Live Active Session Context Card -->
+<div class="rounded-2xl bg-surface-container-low p-space-lg shadow-xl relative overflow-hidden">
+<div class="flex items-center justify-between pb-space-sm mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary">sensors</span>
+<span class="font-headline-sm text-body-lg text-on-surface font-semibold">Active Session Context</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary/20 text-primary font-label-caps text-label-caps uppercase font-bold tracking-wider">Ward 63</span>
+</div>
+<!-- Location & Primary AQI Dial Section -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">Geographic Anchor</span>
+<div class="font-headline-sm text-headline-sm text-on-surface font-bold">Kolkata, WB</div>
+<div class="font-label-mono text-label-mono text-on-surface-variant">Park Street • Camac St Sector</div>
+</div>
+<!-- Visual Micro AQI Ring Gauge -->
+<div class="relative w-16 h-16 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<!-- Gauge Track -->
+<circle class="stroke-surface-container-high" cx="18" cy="18" fill="none" r="14" stroke-width="3"></circle>
+<!-- Value Arc (168/300 ~ 56% circumference ~ 49.2 dasharray) -->
+<circle class="stroke-secondary-container" cx="18" cy="18" fill="none" r="14" stroke-dasharray="88" stroke-dashoffset="38" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<div class="absolute flex flex-col items-center justify-center">
+<span class="font-headline-sm text-body-sm font-bold text-secondary">168</span>
+<span class="font-label-caps text-[8px] text-outline">AQI</span>
+</div>
+</div>
+</div>
+<!-- Warning Status Pill -->
+<div class="px-space-md py-1.5 rounded-xl bg-surface-container-high flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-error font-medium flex items-center gap-1.5">
+<span class="h-2 w-2 rounded-full bg-error animate-ping"></span>
+                Unhealthy for Sensitive
+              </span>
+<span class="font-label-mono text-label-mono text-outline">CPCB Scale</span>
+</div>
+<!-- Key Sensor Matrix Rows -->
+<div class="grid grid-cols-2 gap-space-xs mt-space-xs">
+<div class="p-space-sm rounded-xl bg-surface-container-high/60">
+<span class="font-label-caps text-label-caps text-outline uppercase">Dominant Factor</span>
+<div class="font-headline-sm text-body-lg text-primary font-bold mt-0.5">PM2.5</div>
+<div class="font-label-mono text-label-mono text-on-surface-variant">88.4 µg/m³</div>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-container-high/60">
+<span class="font-label-caps text-label-caps text-outline uppercase">Wind / Inversion</span>
+<div class="font-headline-sm text-body-lg text-secondary font-bold mt-0.5">5.2 km/h</div>
+<div class="font-label-mono text-label-mono text-on-surface-variant">NNW • Stagnant</div>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-container-high/60">
+<span class="font-label-caps text-label-caps text-outline uppercase">Ambient Temp</span>
+<div class="font-headline-sm text-body-lg text-on-surface font-bold mt-0.5">26.8°C</div>
+<div class="font-label-mono text-label-mono text-on-surface-variant">RH 64% Dew: 19°</div>
+</div>
+<div class="p-space-sm rounded-xl bg-surface-container-high/60">
+<span class="font-label-caps text-label-caps text-outline uppercase">Troposphere NO2</span>
+<div class="font-headline-sm text-body-lg text-on-surface font-bold mt-0.5">41 ppb</div>
+<div class="font-label-mono text-label-mono text-on-surface-variant">Vehicle Congestion</div>
+</div>
+</div>
+<!-- Geographic Imagery Context Strip -->
+<div class="rounded-xl overflow-hidden mt-space-xs relative h-28">
+<div class="w-full h-full bg-cover bg-center rounded-xl" data-location="Park Street, Kolkata, India" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBvWnNKgdBnROX776x1O15MFZJvPze63x3qbjDyzv_IWqfBu2CNpr3-XoebAQppCA8WV-Bli61jN3ftSiipgYTe9eVmAVNQ3ZqPm2EJl1Ugc05ildwg2aBVqz7jdoOypFw38V8yBGJqZuG9-je0uEIwoSvLbqzEQeX513R92-B4BQOJ2nHGf0q05BBk0r2ML64sh87RuapsjQ2ZpmpP7z08Esn89AnBGCm8fhNxRB4')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/40 to-transparent flex items-end p-space-sm">
+<div class="flex items-center justify-between w-full">
+<span class="font-label-mono text-label-mono text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary">pin_drop</span> Park Street Urban Canyon
+                  </span>
+<span class="font-label-caps text-label-caps text-primary bg-surface-container-lowest/80 px-1.5 py-0.5 rounded">High Plume Risk</span>
+</div>
+</div>
+</div>
+<!-- Household Profile Synced -->
+<div class="p-space-md rounded-xl bg-surface-container-high/40 mt-space-xs">
+<div class="flex items-center justify-between mb-1.5">
+<span class="font-label-caps text-label-caps text-outline uppercase font-bold">Household Profile Linked</span>
+<span class="material-symbols-outlined text-[16px] text-primary">link</span>
+</div>
+<div class="font-headline-sm text-body-sm text-on-surface font-semibold">Sen Family Unit</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                2 Adults, 1 Child (Football active), 1 Senior with chronic Asthma.
+              </p>
+<div class="flex items-center justify-between mt-2 pt-2 text-label-mono font-label-mono text-outline">
+<span class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> 2 Laser Indoor Nodes
+                </span>
+<span class="text-primary hover:underline cursor-pointer">Edit Profile</span>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Engine Diagnostics & Telemetry Card -->
+<div class="rounded-2xl bg-surface-container-low p-space-lg shadow-xl relative overflow-hidden">
+<div class="flex items-center justify-between pb-space-sm mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-secondary">memory</span>
+<span class="font-headline-sm text-body-lg text-on-surface font-semibold">Engine Diagnostics</span>
+</div>
+<span class="font-label-mono text-label-mono text-secondary px-2 py-0.5 rounded bg-secondary-container/20">Operational</span>
+</div>
+<div class="flex flex-col gap-space-sm text-body-sm">
+<div class="flex items-center justify-between py-1">
+<span class="text-on-surface-variant">Core Inference Model</span>
+<span class="font-label-mono text-label-mono text-on-surface font-bold">AERIS Atmospheric v4.1</span>
+</div>
+<div class="flex items-center justify-between py-1">
+<span class="text-on-surface-variant">Round-Trip Latency</span>
+<span class="font-label-mono text-label-mono text-primary font-bold">240ms</span>
+</div>
+<div class="flex items-center justify-between py-1">
+<span class="text-on-surface-variant">Verified Ground Truth</span>
+<span class="font-label-mono text-label-mono text-on-surface">4 Authoritative APIs</span>
+</div>
+<!-- Ground Truth Node List -->
+<div class="flex flex-col gap-1 p-space-sm rounded-lg bg-surface-container-lowest/60 font-label-mono text-[11px] text-on-surface-variant">
+<div class="flex items-center justify-between">
+<span>• Central Pollution Control Board (CPCB)</span>
+<span class="text-primary">Live</span>
+</div>
+<div class="flex items-center justify-between">
+<span>• OpenAQ Global Sensor Network</span>
+<span class="text-primary">18m sync</span>
+</div>
+<div class="flex items-center justify-between">
+<span>• Copernicus Sentinel-5P Satellite</span>
+<span class="text-primary">Pass 13:40</span>
+</div>
+<div class="flex items-center justify-between">
+<span>• IMD Alipore Weather Station</span>
+<span class="text-primary">Realtime</span>
+</div>
+</div>
+<!-- Stale Data / Fallback Offline Mode Toggle -->
+<div class="flex items-center justify-between pt-space-xs">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Synthetic Offline Mode</span>
+<span class="font-label-mono text-label-mono text-outline">Fallback to historical archive if APIs fail</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Environmental Context Photo Spotlight -->
+<div class="rounded-2xl bg-surface-container-low p-space-md shadow-xl flex items-center gap-space-md">
+<img class="w-20 h-20 rounded-xl object-cover flex-shrink-0" data-alt="Close up photography of atmospheric research laboratory instrument measuring particulate soot with blue and emerald laser illumination in a darkened room, clinical high technology aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsoapHtSQYwYVGXWWVr5MW_KHGqBBdqN6oNzkVLZRFGAgoZq5gY3YOq7kaSAxfLSWVi3yyS8ozq7dFOeowcBajufX3Dcn-ZSf49DR-xEMCaMFmk8lg3Xc0Myp339UxIMt083wmPTetyR9_cIcQ-WKUbJQqONiJPahGGjQxWtdgOhZnsUsv8D9MvyybkVrLeQARuLtTUttbFJfwq2qMJobFBsUbXtYrNp31H7_JOD0"/>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-primary uppercase font-bold tracking-wider">Laser Sensor Ward 63</span>
+<h4 class="font-headline-sm text-body-sm text-on-surface font-semibold mt-0.5">PM Calibration Verified</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Zero drift detected in 72 hours of optical air column analysis.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function initAerisCopilot() {
+    const input = document.getElementById('copilot-input');
+    const sendBtn = document.getElementById('send-trigger');
+    const stream = document.getElementById('chat-stream');
+    const quickChips = document.getElementById('quick-chips');
+
+    if (!input || !sendBtn || !stream) return;
+
+    function handleSend() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      // 1. Append User Message
+      const userMsg = document.createElement('div');
+      userMsg.className = 'flex items-start justify-end gap-space-sm pl-8 transition-all animate-fadeIn';
+      userMsg.innerHTML = `
+        <div class="flex flex-col items-end max-w-xl">
+          <div class="flex items-center gap-space-xs mb-1 font-label-mono text-label-mono text-outline">
+            <span>Dr. Priya Sen</span>
+            <span>•</span>
+            <span>Just now</span>
+          </div>
+          <div class="rounded-2xl rounded-tr-none bg-surface-container-high p-space-md text-on-surface shadow-md">
+            <p class="font-body-md text-body-md leading-relaxed">${escapeHtml(text)}</p>
+          </div>
+          <div class="flex items-center gap-space-xs mt-1.5 text-outline font-label-mono text-label-mono">
+            <span class="material-symbols-outlined text-[13px] text-primary">done_all</span>
+            <span>Delivered</span>
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-primary-container flex-shrink-0 mt-4 shadow-sm">
+          <span class="material-symbols-outlined text-[18px]">person</span>
+        </div>
+      `;
+      stream.appendChild(userMsg);
+      input.value = '';
+
+      // Scroll smoothly to bottom
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+      // 2. Simulate AI Processing indicator and response
+      setTimeout(() => {
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'flex items-start gap-space-sm pr-2 transition-all';
+        aiMsg.innerHTML = `
+          <div class="w-9 h-9 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary flex-shrink-0 shadow-[0_0_15px_rgba(55,230,181,0.2)]">
+            <span class="material-symbols-outlined text-[20px]">smart_toy</span>
+          </div>
+          <div class="flex-1 flex flex-col gap-space-sm">
+            <div class="flex items-center gap-space-xs">
+              <span class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-full bg-primary/10 text-primary font-label-caps text-label-caps uppercase tracking-wider font-bold">
+                <span class="h-1.5 w-1.5 rounded-full bg-primary animate-pulse"></span>
+                AERIS Live Response • 94% Confidence
+              </span>
+            </div>
+            <div class="rounded-2xl rounded-tl-none bg-surface-container-low p-space-lg shadow-xl relative overflow-hidden">
+              <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-transparent"></div>
+              <h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-2">Simulated Planetary Telemetry</h4>
+              <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                Analyzing hyper-local dispersion for Kolkata Ward 63. Atmospheric boundary levels remain constrained. Implementing active air mitigation and avoiding heavy physical exertion during the 17:00-21:00 particulate peak remains optimal for sensitive household members.
+              </p>
+            </div>
+          </div>
+        `;
+        stream.appendChild(aiMsg);
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }, 700);
+    }
+
+    function escapeHtml(string) {
+      return String(string).replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"');
+    }
+
+    sendBtn.addEventListener('click', handleSend);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleSend();
+      }
+    });
+
+    // Wire up chips to populate and send
+    if (quickChips) {
+      quickChips.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (btn) {
+          const chipText = btn.querySelector('span:last-child')?.innerText;
+          if (chipText) {
+            input.value = chipText;
+            input.focus();
+          }
+        }
+      });
+    }
+  })();
+</script></main></div></body></html>

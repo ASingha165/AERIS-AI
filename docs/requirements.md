@@ -1,0 +1,23 @@
+# Challenge 6 Requirements Specification
+
+## Challenge Title
+**Challenge 6 — Urban Air Quality Assistant**  
+**Competition:** Hack2Skill PromptWars Virtual  
+**Target Deadline:** November 29, 2026
+
+## Core Challenge Objectives & AERIS-AI Implementation Matrix
+
+| Requirement | Challenge Directive | AERIS-AI Implementation | Verification Route |
+|---|---|---|---|
+| **R1: Air Quality Telemetry** | Present actionable air quality indices for urban centers | Real-time CPCB / OpenAQ-grounded metrics for PM2.5, PM10, NO2, and O3 with 24h predictive horizon | `/dashboard` |
+| **R2: Conversational Assistant** | AI conversational reasoning for everyday environmental decisions | GenAI Copilot answering nuanced queries on pediatric exposure, sports timing, and masks | `/copilot` |
+| **R3: Daily Routine Scheduling** | Identify safer windows for outdoor activities | Diurnal planner comparing boundary layer inversion vs midday solar convection windows | `/planner` |
+| **R4: Household Personalization** | Tailor advice based on vulnerable family members | Vulnerability index scoring for pediatric asthma, geriatric cardiovascular history, and floor level | `/household` |
+| **R5: Indoor Air Quality** | Practical guidance for home micro-climates | Room-by-room interventions, window sealing rules, and low-cost DIY Corsi-Rosenthal box fan filtration | `/indoor` |
+| **R6: Sustainable Action** | Incentivize eco-friendly choices | Multi-modal transit emission comparison (Metro vs Car) with cumulative avoided CO2 & PM tracking | `/impact` |
+
+## Non-Negotiable Standards
+1. **Zero Hallucination Standard:** Never invent synthetic indoor AQI values without hardware probes.
+2. **Medical Advisory Protocol:** Clearly delineate between environmental exposure mitigation guidance and clinical medical treatment.
+3. **Data Integrity:** Differentiate observed ground sensor telemetry from numerical forecast projections.
+
