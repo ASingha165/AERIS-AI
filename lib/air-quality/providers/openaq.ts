@@ -16,9 +16,10 @@ export interface OpenAQResult {
 /**
  * OpenAQ API v3 Provider
  * Base URL: https://api.openaq.org/v3
- * 
- * Fetches actual ground observations reported by physical monitoring stations.
- * Adheres strictly to OpenAQ v3 schema and requires process.env.OPENAQ_API_KEY for authorization.
+ *
+ * Reads latest measurements from stationary reference monitors. Latest values
+ * are snapshots only; they are never treated as statutory averaging windows.
+ * The API key is confined to this server-side provider.
  */
 export class OpenAQProvider {
   private static readonly BASE_URL = 'https://api.openaq.org/v3';
@@ -33,8 +34,8 @@ export class OpenAQProvider {
 
     const defaultAttribution: SourceAttribution = {
       provider: 'OpenAQ',
-      datasetName: 'OpenAQ API v3 Global Station Telemetry',
-      attributionText: 'Official ground monitoring station observations aggregated via OpenAQ.',
+      datasetName: 'OpenAQ API v3 Station Telemetry',
+      attributionText: 'Latest measurements reported by stationary reference monitors and aggregated via OpenAQ.',
       url: 'https://openaq.org',
       isStationObservation: true,
     };
@@ -54,23 +55,22 @@ export class OpenAQProvider {
     const timeoutId = setTimeout(() => controller.abort(), this.TIMEOUT_MS);
 
     try {
-      // Step 1: Query nearby monitoring locations within radius
       const locationsUrl = new URL(`${this.BASE_URL}/locations`);
       locationsUrl.searchParams.set('coordinates', `${latitude},${longitude}`);
-      locationsUrl.searchParams.set('radius', radiusMeters.toString());
-      locationsUrl.searchParams.set('limit', '10');
+      locationsUrl.searchParams.set('radius', Math.min(radiusMeters, 25000).toString());
+      locationsUrl.searchParams.set('limit', '100');
+      locationsUrl.searchParams.set('monitor', 'true');
+      locationsUrl.searchParams.set('mobile', 'false');
 
       const res = await fetch(locationsUrl.toString(), {
         signal: controller.signal,
         headers: {
           'X-API-Key': apiKey,
           'Accept': 'application/json',
-          'User-Agent': 'AERIS-AI/2.0 (Environmental Data Engine)',
+          'User-Agent': 'AERIS-AI/2.1 (Environmental Data Engine)',
         },
-        next: { revalidate: 600 }, // 10-min cache
+        next: { revalidate: 600 },
       });
-
-      clearTimeout(timeoutId);
 
       if (!res.ok) {
         return {
@@ -85,71 +85,80 @@ export class OpenAQProvider {
 
       const locationsData = await res.json();
       const results = locationsData?.results;
+      const eligibleLocations = Array.isArray(results)
+        ? results
+            .filter((location: any) =>
+              location.isMonitor === true &&
+              location.isMobile === false &&
+              typeof location.coordinates?.latitude === 'number' &&
+              typeof location.coordinates?.longitude === 'number'
+            )
+            .sort((a: any, b: any) => (a.distance ?? Number.POSITIVE_INFINITY) - (b.distance ?? Number.POSITIVE_INFINITY))
+        : [];
 
-      if (!Array.isArray(results) || results.length === 0) {
+      if (eligibleLocations.length === 0) {
         return {
           available: false,
           attribution: defaultAttribution,
           station: null,
           measurements: {},
           reason: 'NO_STATION_FOUND',
-          error: `No eligible monitoring stations found within ${radiusMeters / 1000} km radius of coordinates.`,
+          error: `No stationary reference monitor was found within ${Math.min(radiusMeters, 25000) / 1000} km of the selected coordinates.`,
         };
       }
 
-      // Step 2: Select the closest active station
-      const bestLocation = results[0];
+      // OpenAQ's locations endpoint includes distance; select the nearest eligible monitor.
+      const bestLocation = eligibleLocations[0];
       const stationId = String(bestLocation.id);
       const stationName = bestLocation.name || 'Regional Monitoring Station';
-      const stationDistanceMeters = bestLocation.distance ?? 0;
+      const stationDistanceMeters = typeof bestLocation.distance === 'number' ? bestLocation.distance : 0;
       const stationDistanceKm = Number((stationDistanceMeters / 1000).toFixed(1));
-      const providerName = bestLocation.provider?.name || 'National Environmental Agency';
+      const providerName = bestLocation.provider?.name || 'Provider not specified';
 
-      // Step 3: Fetch latest measurements from this location
       const latestUrl = `${this.BASE_URL}/locations/${stationId}/latest`;
       const latestRes = await fetch(latestUrl, {
+        signal: controller.signal,
         headers: {
           'X-API-Key': apiKey,
           'Accept': 'application/json',
-          'User-Agent': 'AERIS-AI/2.0',
+          'User-Agent': 'AERIS-AI/2.1 (Environmental Data Engine)',
         },
         next: { revalidate: 300 },
       });
 
-      let latestSensors: any[] = [];
-      if (latestRes.ok) {
-        const latestJson = await latestRes.json();
-        latestSensors = latestJson?.results || [];
-      } else if (Array.isArray(bestLocation.sensors)) {
-        latestSensors = bestLocation.sensors;
+      if (!latestRes.ok) {
+        return {
+          available: false,
+          attribution: defaultAttribution,
+          station: null,
+          measurements: {},
+          reason: 'API_ERROR',
+          error: `OpenAQ latest-measurements endpoint returned status ${latestRes.status}: ${latestRes.statusText}`,
+        };
       }
 
+      const latestJson = await latestRes.json();
+      const latestSensors: any[] = Array.isArray(latestJson?.results) ? latestJson.results : [];
       const measurements: Partial<Record<PollutantType, ObservationMetric>> = {};
       const availableSensorsList: PollutantType[] = [];
       let mostRecentTimestamp = '';
 
       for (const item of latestSensors) {
-        const parameterName = (
-          item.parameter?.name ||
-          item.parameter?.displayName ||
-          item.parameter ||
-          ''
-        ).toLowerCase();
-
+        const parameterValue = typeof item.parameter === 'string'
+          ? item.parameter
+          : item.parameter?.name ?? item.parameter?.displayName ?? '';
+        const parameterName = String(parameterValue).toLowerCase();
         const pollutantType = this.mapParameterToPollutantType(parameterName);
         if (!pollutantType) continue;
 
-        const rawValue = item.value ?? item.latest?.value;
-        const rawUnit = item.parameter?.units || item.units || 'µg/m³';
-        const timestamp = item.datetime?.utc || item.latest?.datetime || bestLocation.datetimeLast?.utc || new Date().toISOString();
+        const rawValue = item.value;
+        const rawUnit = item.parameter?.units || item.units;
+        const timestamp = item.datetime?.utc || item.datetime?.local;
 
-        if (rawValue === null || rawValue === undefined || isNaN(rawValue)) {
-          continue;
-        }
+        // Missing timestamps/units are not repaired with guessed values.
+        if (typeof rawValue !== 'number' || !Number.isFinite(rawValue) || !rawUnit || !timestamp) continue;
 
-        if (timestamp > mostRecentTimestamp) {
-          mostRecentTimestamp = timestamp;
-        }
+        if (timestamp > mostRecentTimestamp) mostRecentTimestamp = timestamp;
 
         const normalized = normalizeConcentrationForCPCB(pollutantType, rawValue, rawUnit);
         if (!normalized) continue;
@@ -175,15 +184,13 @@ export class OpenAQProvider {
             name: stationName,
             distanceKm: stationDistanceKm,
             coordinates: {
-              latitude: bestLocation.coordinates?.latitude || latitude,
-              longitude: bestLocation.coordinates?.longitude || longitude,
+              latitude: bestLocation.coordinates.latitude ?? latitude,
+              longitude: bestLocation.coordinates.longitude ?? longitude,
             },
           },
         };
 
-        if (!availableSensorsList.includes(pollutantType)) {
-          availableSensorsList.push(pollutantType);
-        }
+        if (!availableSensorsList.includes(pollutantType)) availableSensorsList.push(pollutantType);
       }
 
       const station: MonitoringStation = {
@@ -192,10 +199,10 @@ export class OpenAQProvider {
         provider: providerName,
         distanceKm: stationDistanceKm,
         coordinates: {
-          latitude: bestLocation.coordinates?.latitude || latitude,
-          longitude: bestLocation.coordinates?.longitude || longitude,
+          latitude: bestLocation.coordinates.latitude ?? latitude,
+          longitude: bestLocation.coordinates.longitude ?? longitude,
         },
-        lastUpdated: mostRecentTimestamp || bestLocation.datetimeLast?.utc || new Date().toISOString(),
+        lastUpdated: mostRecentTimestamp || bestLocation.datetimeLast?.utc || '',
         availableSensors: availableSensorsList,
         status: availableSensorsList.length > 0 ? 'active' : 'stale',
       };
@@ -203,7 +210,7 @@ export class OpenAQProvider {
       const attribution: SourceAttribution = {
         ...defaultAttribution,
         datasetName: `OpenAQ (${providerName} • ${stationName})`,
-        stationCount: results.length,
+        stationCount: eligibleLocations.length,
       };
 
       return {
@@ -213,17 +220,19 @@ export class OpenAQProvider {
         measurements,
         reason: Object.keys(measurements).length > 0 ? 'SUCCESS' : 'NO_STATION_FOUND',
       };
-    } catch (err: any) {
-      clearTimeout(timeoutId);
-      const isAbort = err.name === 'AbortError';
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error('Unknown network error');
+      const isAbort = error.name === 'AbortError';
       return {
         available: false,
         attribution: defaultAttribution,
         station: null,
         measurements: {},
         reason: 'API_ERROR',
-        error: isAbort ? 'OpenAQ request timed out after 8000ms' : (err.message || 'Unknown network error'),
+        error: isAbort ? `OpenAQ request timed out after ${this.TIMEOUT_MS}ms` : error.message,
       };
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 

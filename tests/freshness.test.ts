@@ -5,27 +5,23 @@ import { FreshnessService } from '@/lib/air-quality/services/freshness-service';
 describe('FreshnessService', () => {
   test('Freshness threshold categorization', () => {
     const now = Date.now();
-
-    // Less than 2 hours: LIVE
-    const liveIso = new Date(now - 30 * 60 * 1000).toISOString(); // 30m ago
-    assert.equal(FreshnessService.getFreshness(liveIso), 'LIVE');
-
-    // 2 - 12 hours: RECENT
-    const recentIso = new Date(now - 4 * 60 * 60 * 1000).toISOString(); // 4h ago
-    assert.equal(FreshnessService.getFreshness(recentIso), 'RECENT');
-
-    // 12 - 48 hours: STALE
-    const staleIso = new Date(now - 24 * 60 * 60 * 1000).toISOString(); // 24h ago
-    assert.equal(FreshnessService.getFreshness(staleIso), 'STALE');
-
-    // > 48 hours: UNAVAILABLE
-    const oldIso = new Date(now - 72 * 60 * 60 * 1000).toISOString(); // 3 days ago
-    assert.equal(FreshnessService.getFreshness(oldIso), 'UNAVAILABLE');
-
-    // Null or invalid: UNAVAILABLE
+    assert.equal(FreshnessService.getFreshness(new Date(now - 30 * 60 * 1000).toISOString()), 'LIVE');
+    assert.equal(FreshnessService.getFreshness(new Date(now - 4 * 60 * 60 * 1000).toISOString()), 'RECENT');
+    assert.equal(FreshnessService.getFreshness(new Date(now - 24 * 60 * 60 * 1000).toISOString()), 'STALE');
+    assert.equal(FreshnessService.getFreshness(new Date(now - 72 * 60 * 60 * 1000).toISOString()), 'UNAVAILABLE');
     assert.equal(FreshnessService.getFreshness(null), 'UNAVAILABLE');
     assert.equal(FreshnessService.getFreshness(undefined), 'UNAVAILABLE');
     assert.equal(FreshnessService.getFreshness('not-a-date'), 'UNAVAILABLE');
+  });
+
+  test('Small future timestamp drift is tolerated', () => {
+    const thirtyMinutesAhead = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+    assert.equal(FreshnessService.getFreshness(thirtyMinutesAhead), 'LIVE');
+  });
+
+  test('Materially future-dated timestamps are unavailable', () => {
+    const twoHoursAhead = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
+    assert.equal(FreshnessService.getFreshness(twoHoursAhead), 'UNAVAILABLE');
   });
 
   test('Format time difference display', () => {
