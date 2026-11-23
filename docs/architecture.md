@@ -2,76 +2,78 @@
 
 ## 1. System Overview
 
-AERIS-AI is engineered as a modern full-stack web application on Next.js 15 with App Router. The platform decouples client-side presentation from backend telemetry processing and AI reasoning engines.
+AERIS-AI is engineered as a modern full-stack environmental decision intelligence platform on Next.js 15 (App Router). The platform strictly decouples client presentation from backend telemetry processing, numerical atmospheric models, and AI reasoning engines.
 
 ```
 ┌────────────────────────────────────────────────────────┐
 │                   Next.js App Router                   │
-│        Desktop Sidebar • Mobile Nav • Page Views       │
-└────────────────────────────────────────────────────────┘
-                           │
-                           ▼
+│      Desktop Sidebar • App Header • Page Views         │
+│  (Tailwind CSS • shadcn/ui • Recharts • Stitch Design) │
+└───────────────────────────┬────────────────────────────┘
+                            │
+                            ▼
 ┌────────────────────────────────────────────────────────┐
-│            Modular Next.js API Layer (/api)            │
-│  - /api/telemetry (OpenAQ / CPCB ingestion)            │
-│  - /api/copilot (Gemini API LLM reasoning)             │
-│  - /api/household (Supabase CRUD)                      │
-│  - /api/planner (Dispersion calculations)              │
-└────────────────────────────────────────────────────────┘
-        │                  │                   │
-        ▼                  ▼                   ▼
-┌──────────────┐   ┌──────────────┐    ┌───────────────┐
-│ Google       │   │ Supabase     │    │ Environmental │
-│ Gemini 1.5   │   │ PostgreSQL   │    │ APIs (OpenAQ, │
-│ Flash / Pro  │   │ Auth & Data  │    │ Open-Meteo)   │
-└──────────────┘   └──────────────┘    └───────────────┘
+│             Next.js Server API Routes (/api)           │
+│  - /api/air-quality (Dual-provider telemetry engine)   │
+│  - /api/locations/search (Geocoding & city search)     │
+│  - /api/copilot (Gemini AI Reasoning Engine - Stage 3) │
+└───────────────────────────┬────────────────────────────┘
+                            │
+         ┌──────────────────┴──────────────────┐
+         ▼                                     ▼
+┌─────────────────────────────────┐   ┌─────────────────────────────────┐
+│     Provider A: Open-Meteo      │   │     Provider B: OpenAQ v3       │
+│   Modeled Dispersion Forecast   │   │    Ground Station Telemetry     │
+│  (Copernicus CAMS ~40km grid)   │   │  (CPCB / State Boards In-Situ)  │
+└─────────────────────────────────┘   └─────────────────────────────────┘
 ```
 
-## 2. Component Hierarchy
+---
 
-### Global Layout Shell:
-- `app/layout.tsx`: Root HTML, Space Grotesk and Inter fonts, dark theme provider.
-- `components/layout/AppSidebar.tsx`: Fixed 288px desktop sidebar with telemetry node status and route links.
-- `components/layout/AppHeader.tsx`: Fixed top bar with location selector, live sync badge, search input, and profile trigger.
-- `components/layout/MobileNavigation.tsx`: Fixed bottom navigation for mobile screen widths (<1024px).
-- `components/layout/DashboardLayout.tsx`: Shell coordinator wrapping authenticated views.
+## 2. Directory & Service Architecture
 
-### Domain Modules:
-1. **Air Quality HUD (`/dashboard`):**
-   - `AQIOverview`: High-level category, primary driver callout, ambient parameters.
-   - `AQIGauge`: 270-degree SVG radial gauge with dynamic color styling.
-   - `PollutantCard`: 4-column bento grid for PM2.5, PM10, NO2, O3 with historical sparklines.
-   - `AirQualityChart`: 24-hour diurnal curve with measured vs generative forecast envelope.
-   - `RecommendationPreview`: Daily scheduling windows & node telemetry table.
+```
+lib/air-quality/
+├── calculations/
+│   ├── cpcb-aqi.ts             # Piecewise linear interpolation & CPCB rule engine
+│   └── pollutant-utils.ts      # STP unit conversions (ppm, ppb, mg/m³ to standard)
+├── constants/
+│   ├── cpcb-breakpoints.ts     # Official CPCB breakpoint thresholds & categories
+│   └── pollutant-metadata.ts   # Chemical formulas, standard units, health impacts
+├── providers/
+│   ├── open-meteo.ts           # Open-Meteo 5-day hourly forecast & CAMS attribution
+│   └── openaq.ts               # OpenAQ API v3 client with location & sensor discovery
+├── schemas/
+│   └── air-quality-schema.ts   # Zod runtime schemas for coordinates, search, payloads
+└── services/
+    ├── air-quality-service.ts  # Orchestrator with 10-minute in-memory response cache
+    ├── freshness-service.ts    # Freshness threshold classifier (<2h, 2-12h, 12-48h)
+    ├── location-service.ts     # Geocoding resolution & major Indian city presets
+    └── normalization-service.ts# Telemetry synthesis without provenance cross-contamination
+```
 
-2. **Copilot Interface (`/copilot`):**
-   - `ChatInterface`: Conversation orchestrator with advisory notices.
-   - `ChatMessage`: Dual-role message bubble with confidence metrics, exposure curves, and action chips.
-   - `ChatInput`: Controlled prompt input.
-   - `SuggestionPrompts`: Quick-inquiry discovery chips.
+---
 
-3. **Daily Planner (`/planner`):**
-   - `ActivitySelector`: Routine selection with duration range scrubber.
-   - `PollutionTimeline`: Hourly micro-inversion exposure matrix.
-   - `ActivityRecommendation`: Inversion-safe schedule decision.
+## 3. API Contract Specifications
 
-4. **Household Guardian (`/household`):**
-   - `HouseholdForm`: Multi-tab profile configurator with vulnerability index scoring.
+### `GET /api/air-quality`
+- **Query Parameters:**
+  - `lat` (number, required): -90 to 90
+  - `lon` (number, required): -180 to 180
+  - `radius` (number, optional): Search radius in meters (default: 25000)
+  - `name` (string, optional): Display name for location
+- **Cache-Control:** `public, s-maxage=600, stale-while-revalidate=300`
+- **Response Structure (`AirQualityResponse`):**
+  - `location`: Resolved geographic metadata.
+  - `observations`: Map of `ObservationMetric` by pollutant (`PM2.5`, `PM10`, `NO2`, `O3`, `SO2`, `CO`).
+  - `forecast`: Array of `HourlyForecastPoint` for 24h/5-day diurnal trajectory.
+  - `aqi`: `CPCB_AQI_Result` with certified score, category, dominant pollutant, sub-indices, and statutory status.
+  - `sources`: Complete provenance array (`SourceAttribution[]`).
+  - `status`: `LIVE_OBSERVATION` | `PARTIAL_OBSERVATION` | `FORECAST_ONLY` | `UNAVAILABLE`.
+  - `freshness`: Overall recency (`LIVE` | `RECENT` | `STALE` | `UNAVAILABLE`).
 
-5. **Indoor Guardian (`/indoor`):**
-   - `RoomSelector`: Spatial geometry breakdown, fenestration specs, and DIY budget filtration.
-
-6. **Impact Explorer (`/impact`):**
-   - `SustainableComparison`: Multi-modal commute transit evaluation & carbon offset quantification.
-
-## 3. Styling & Token Specifications
-
-Tailwind CSS tokens are calibrated directly to `DESIGN.md` in `stitch_aeris_environmental_intelligence_platform`:
-- Background Base: `#080F1C`
-- Container Surface: `#142235`
-- Primary Signal: `#37E6B5`
-- Secondary Signal: `#53C7F5`
-- Warning: `#F6C453`
-- Danger: `#F16B77`
-- Hairline Border: `#1F334E`
-
+### `GET /api/locations/search`
+- **Query Parameters:**
+  - `q` (string, required): City name or query string (e.g., "Kolkata", "Anand Vihar")
+- **Cache-Control:** `public, s-maxage=3600, stale-while-revalidate=7200`
+- **Response:** Array of `LocationMetadata` with latitude, longitude, state, and country.

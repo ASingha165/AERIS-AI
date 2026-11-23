@@ -2,10 +2,11 @@ import React from 'react';
 import { getAQITheme } from '@/lib/utils';
 
 interface AQIGaugeProps {
-  aqi: number;
+  aqi: number | null | undefined;
   maxAqi?: number;
   size?: number;
   strokeWidth?: number;
+  label?: string;
 }
 
 export function AQIGauge({
@@ -13,15 +14,19 @@ export function AQIGauge({
   maxAqi = 500,
   size = 208,
   strokeWidth = 12,
+  label = 'Estimated AQI',
 }: AQIGaugeProps) {
-  const theme = getAQITheme(aqi);
+  const isAvailable = aqi !== null && aqi !== undefined && !isNaN(aqi);
+  const displayAqi = isAvailable ? Math.round(aqi) : null;
+  const theme = getAQITheme(displayAqi);
+  
   const radius = (size - strokeWidth * 2) / 2;
   const circumference = 2 * Math.PI * radius;
   // Arc length is ~270 degrees (3/4 of circle)
   const arcTotal = circumference * 0.75;
-  const percentage = Math.min(Math.max(aqi / maxAqi, 0), 1);
+  const percentage = isAvailable ? Math.min(Math.max((displayAqi || 0) / maxAqi, 0), 1) : 0;
   const activeStroke = percentage * arcTotal;
-  const saturationPercent = (percentage * 100).toFixed(1);
+  const saturationPercent = isAvailable ? (percentage * 100).toFixed(1) : '0.0';
 
   return (
     <div className="relative shrink-0 flex items-center justify-center" style={{ width: size, height: size }}>
@@ -53,37 +58,38 @@ export function AQIGauge({
         />
 
         {/* Active Value Arc */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="url(#aqiGaugeGradient)"
-          strokeWidth={strokeWidth}
-          strokeDasharray={`${activeStroke} ${circumference}`}
-          strokeLinecap="round"
-          filter="url(#gaugeGlow)"
-        />
+        {isAvailable && (
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="url(#aqiGaugeGradient)"
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${activeStroke} ${circumference}`}
+            strokeLinecap="round"
+            filter="url(#gaugeGlow)"
+          />
+        )}
       </svg>
 
       {/* Center Readout HUD */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
         <span className="font-heading text-[10px] uppercase tracking-wider text-outline">
-          Estimated AQI
+          {label}
         </span>
         <span className="font-heading text-4xl lg:text-5xl font-bold leading-none text-on-surface my-1 tracking-tighter">
-          {aqi}
+          {displayAqi !== null ? displayAqi : '--'}
         </span>
         <span className="font-mono text-xs text-secondary">
-          Scale 0 - {maxAqi}
+          {isAvailable ? `Scale 0 - ${maxAqi}` : 'No Data'}
         </span>
       </div>
 
       {/* Needle & Saturation Badge */}
       <div className="absolute bottom-2 font-mono text-[11px] text-outline">
-        ● {saturationPercent}% Saturation
+        {isAvailable ? `● ${saturationPercent}% Saturation` : '● Offline'}
       </div>
     </div>
   );
 }
-

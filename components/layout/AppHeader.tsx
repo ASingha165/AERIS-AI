@@ -1,38 +1,84 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   MapPin,
   ChevronDown,
   RefreshCw,
   Search,
-  Bell,
   Check,
   Radio,
   Sparkles,
+  Crosshair,
+  Loader2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const CITIES = [
-  { id: 'kolkata-park', name: 'Kolkata, WB — Park Street Ward 63', primary: true },
-  { id: 'kolkata-saltlake', name: 'Kolkata, WB — Salt Lake Sector V', primary: false },
-  { id: 'mumbai-bandra', name: 'Mumbai, MH — Bandra Kurla Complex', primary: false },
-  { id: 'delhi-anand', name: 'Delhi, DL — Anand Vihar', primary: false },
-];
+import { useAirQuality } from '@/lib/context/AirQualityContext';
+import { PREDEFINED_LOCATIONS } from '@/lib/air-quality/services/location-service';
+import { LocationMetadata } from '@/types/air-quality';
 
 export function AppHeader() {
-  const [selectedLocation, setSelectedLocation] = useState(CITIES[0]);
+  const { selectedLocation, setSelectedLocation, refetch, isLoading, data } = useAirQuality();
   const [locationOpen, setLocationOpen] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastRefreshedTime, setLastRefreshedTime] = useState('4m ago');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<LocationMetadata[]>(PREDEFINED_LOCATIONS);
+  const [isSearching, setIsSearching] = useState(false);
+  const [geoLocating, setGeoLocating] = useState(false);
 
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    setTimeout(() => {
-      setIsRefreshing(false);
-      setLastRefreshedTime('Just now');
-    }, 900);
+  // Search locations effect
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults(PREDEFINED_LOCATIONS);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const res = await fetch(`/api/locations/search?q=${encodeURIComponent(searchQuery)}`);
+        if (res.ok) {
+          const results: LocationMetadata[] = await res.json();
+          setSearchResults(results);
+        }
+      } catch {
+        // Keep existing
+      } finally {
+        setIsSearching(false);
+      }
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.');
+      return;
+    }
+
+    setGeoLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = Number(pos.coords.latitude.toFixed(4));
+        const lon = Number(pos.coords.longitude.toFixed(4));
+        setSelectedLocation({
+          name: 'Current Location',
+          state: 'GPS Telemetry',
+          country: 'Local',
+          latitude: lat,
+          longitude: lon,
+        });
+        setGeoLocating(false);
+        setLocationOpen(false);
+      },
+      (err) => {
+        console.warn('Geolocation error:', err.message);
+        setGeoLocating(false);
+        alert('Could not determine your GPS location. Please select a city.');
+      },
+      { timeout: 8000 }
+    );
   };
 
   return (
@@ -60,103 +106,127 @@ export function AppHeader() {
             >
               <MapPin className="w-4 h-4 text-primary-container shrink-0" />
               <span className="truncate max-w-[140px] sm:max-w-[220px] md:max-w-none">
-                {selectedLocation.name}
+                {selectedLocation.name}{selectedLocation.state ? `, ${selectedLocation.state}` : ''}
               </span>
               <ChevronDown className="w-3.5 h-3.5 text-on-surface-variant shrink-0" />
             </button>
 
             {locationOpen && (
-              <div className="absolute top-full left-0 mt-2 w-72 rounded-xl bg-[#142235] border border-[#1F334E] shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                <div className="px-2 py-1.5 text-[10px] font-heading uppercase tracking-wider text-outline">
-                  Select Monitoring Grid
+              <div className="absolute top-full left-0 mt-2 w-80 sm:w-96 rounded-xl bg-[#142235] border border-[#1F334E] shadow-2xl p-3 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-3">
+                {/* Search input */}
+                <div className="relative">
+                  <Search className="w-4 h-4 text-outline absolute left-3 top-2.5" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search city, district, or coordinates..."
+                    className="w-full pl-9 pr-3 py-1.5 rounded-lg bg-[#101C2B] border border-[#1F334E] text-xs text-on-surface placeholder:text-outline focus:outline-none focus:border-primary"
+                    autoFocus
+                  />
+                  {isSearching && (
+                    <Loader2 className="w-3.5 h-3.5 text-primary animate-spin absolute right-3 top-2.5" />
+                  )}
                 </div>
-                {CITIES.map((city) => (
-                  <button
-                    key={city.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedLocation(city);
-                      setLocationOpen(false);
-                    }}
-                    className={cn(
-                      'w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors text-left',
-                      city.id === selectedLocation.id
-                        ? 'bg-primary-container/20 text-primary-container font-semibold'
-                        : 'text-on-surface hover:bg-[#19202D]'
-                    )}
-                  >
-                    <span>{city.name}</span>
-                    {city.id === selectedLocation.id && (
-                      <Check className="w-3.5 h-3.5 text-primary-container" />
-                    )}
-                  </button>
-                ))}
+
+                {/* GPS Location Button */}
+                <button
+                  type="button"
+                  onClick={handleUseCurrentLocation}
+                  disabled={geoLocating}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-primary-container/10 hover:bg-primary-container/20 text-primary border border-primary/20 text-xs font-heading font-medium transition-colors"
+                >
+                  {geoLocating ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Crosshair className="w-3.5 h-3.5" />
+                  )}
+                  <span>{geoLocating ? 'Determining GPS coordinates...' : 'Use My Current Location'}</span>
+                </button>
+
+                {/* Results list */}
+                <div className="max-h-60 overflow-y-auto space-y-1">
+                  <div className="px-2 py-1 text-[10px] font-heading uppercase tracking-wider text-outline">
+                    {searchQuery ? 'Search Matches' : 'Major Monitoring Grids'}
+                  </div>
+                  {searchResults.map((loc) => {
+                    const isSelected =
+                      Math.abs(loc.latitude - selectedLocation.latitude) < 0.05 &&
+                      Math.abs(loc.longitude - selectedLocation.longitude) < 0.05;
+
+                    return (
+                      <button
+                        key={`${loc.name}-${loc.latitude}-${loc.longitude}`}
+                        type="button"
+                        onClick={() => {
+                          setSelectedLocation(loc);
+                          setLocationOpen(false);
+                          setSearchQuery('');
+                        }}
+                        className={cn(
+                          'w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors text-left',
+                          isSelected
+                            ? 'bg-primary-container/20 text-primary-container font-semibold'
+                            : 'text-on-surface hover:bg-[#19202D]'
+                        )}
+                      >
+                        <div className="truncate">
+                          <span className="font-medium">{loc.name}</span>
+                          <span className="text-outline text-[11px] ml-1.5">
+                            {loc.state ? `${loc.state}, ` : ''}{loc.country}
+                          </span>
+                        </div>
+                        {isSelected && (
+                          <Check className="w-3.5 h-3.5 text-primary-container shrink-0" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
 
-          {/* Sensor Telemetry Indicator (Hidden on small mobile) */}
+          {/* Sensor Telemetry Indicator */}
           <div className="hidden xl:flex items-center gap-2 font-mono text-xs text-outline">
-            <span className="h-1.5 w-1.5 rounded-full bg-secondary animate-pulse" />
-            <span>Illustrative Sensor Telemetry • Real-time Sync</span>
-          </div>
-        </div>
-
-        {/* Center: Update source recency badge */}
-        <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-[#142235]/70 border border-[#1F334E] shadow-inner text-xs font-mono">
-          <Radio className="w-3.5 h-3.5 text-secondary" />
-          <span className="text-on-surface-variant">Updated {lastRefreshedTime} • CPCB/OpenAQ Source</span>
-          <button
-            type="button"
-            onClick={handleRefresh}
-            className="p-1 rounded-full hover:bg-[#1F334E] text-on-surface-variant hover:text-on-surface transition-colors"
-            title="Refresh Environmental Telemetry"
-          >
-            <RefreshCw className={cn('w-3.5 h-3.5', isRefreshing && 'animate-spin text-primary')} />
-          </button>
-        </div>
-
-        {/* Right Controls: Search, Notifications, Profile */}
-        <div className="flex items-center gap-3">
-          {/* Quick Search */}
-          <div className="relative hidden lg:block w-64">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
-            <input
-              type="text"
-              placeholder="Search pollutants, wards..."
-              className="w-full pl-9 pr-3 py-1.5 rounded-full bg-[#142235] text-on-surface placeholder:text-outline text-xs border border-[#1F334E] focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all"
+            <span
+              className={cn(
+                'h-1.5 w-1.5 rounded-full',
+                isLoading ? 'bg-warning animate-ping' : 'bg-primary animate-pulse'
+              )}
             />
+            <span>
+              {isLoading
+                ? 'Syncing telemetry...'
+                : data?.status === 'LIVE_OBSERVATION'
+                ? 'Live Ground Station'
+                : data?.status === 'PARTIAL_OBSERVATION'
+                ? 'Hybrid Station Telemetry'
+                : 'CAMS Atmospheric Model'}
+            </span>
           </div>
+        </div>
 
-          {/* Notifications Button */}
+        {/* Right Side: Re-Sync button & User Info */}
+        <div className="flex items-center gap-3">
           <button
             type="button"
-            className="relative p-2 rounded-full bg-[#142235]/80 hover:bg-[#19202D] border border-[#1F334E] text-on-surface-variant hover:text-on-surface transition-colors"
-            title="Notifications"
+            onClick={() => refetch()}
+            disabled={isLoading}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#142235] hover:bg-[#19202D] text-on-surface text-xs font-mono border border-[#1F334E] transition-colors disabled:opacity-50"
+            title="Force refresh air quality telemetry"
           >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-1 right-1 h-3.5 w-3.5 rounded-full bg-danger text-[9px] font-heading font-bold text-white flex items-center justify-center">
-              1
-            </span>
+            <RefreshCw className={cn('w-3.5 h-3.5 text-primary', isLoading && 'animate-spin')} />
+            <span className="hidden sm:inline">{isLoading ? 'Syncing...' : 'Re-Sync'}</span>
           </button>
 
-          {/* User Profile Control */}
-          <div className="flex items-center gap-2.5 pl-1 cursor-pointer">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-[#080F1C] font-bold text-xs ring-1 ring-primary/40 shadow-sm">
-              PS
-            </div>
-            <div className="hidden sm:flex flex-col text-left">
-              <span className="font-heading text-xs text-on-surface font-semibold leading-tight">
-                Dr. Priya Sen
-              </span>
-              <span className="font-heading text-[10px] text-primary-container">
-                Household Admin
-              </span>
-            </div>
+          {/* Quick status pill */}
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#142235] border border-[#1F334E] text-[11px] font-mono text-outline">
+            <Radio className="w-3 h-3 text-secondary" />
+            <span>{selectedLocation.latitude.toFixed(2)}°N, {selectedLocation.longitude.toFixed(2)}°E</span>
           </div>
         </div>
       </div>
     </header>
   );
 }
-

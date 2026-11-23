@@ -10,40 +10,116 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
-import { Sparkles, Info } from 'lucide-react';
-import { DiurnalForecastPoint } from '@/types/air-quality';
+import { Sparkles, Info, Activity } from 'lucide-react';
+import { DiurnalForecastPoint, HourlyForecastPoint } from '@/types/air-quality';
 import { cn } from '@/lib/utils';
 
 interface AirQualityChartProps {
-  data: DiurnalForecastPoint[];
+  forecast?: HourlyForecastPoint[];
+  data?: DiurnalForecastPoint[];
 }
 
-export function AirQualityChart({ data }: AirQualityChartProps) {
+export function AirQualityChart({ forecast, data }: AirQualityChartProps) {
   const [selectedPollutant, setSelectedPollutant] = useState<'pm25' | 'pm10' | 'no2' | 'aqi'>('pm25');
-  const [selectedRange, setSelectedRange] = useState<'24h' | '3day' | '7day'>('24h');
+  const [selectedRange, setSelectedRange] = useState<'24h' | '3day' | '5day'>('24h');
 
-  // Custom tooltip
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  // Prepare chart dataset
+  let chartPoints: {
+    time: string;
+    pm25: number;
+    pm10: number;
+    no2: number;
+    aqi: number;
+    annotation?: string;
+    isCurrentHour?: boolean;
+  }[] = [];
+
+  if (forecast && forecast.length > 0) {
+    const limit = selectedRange === '24h' ? 24 : selectedRange === '3day' ? 72 : 120;
+    chartPoints = forecast.slice(0, limit).map((pt) => {
+      let timeLabel = pt.time;
+      try {
+        const d = new Date(pt.time);
+        if (!isNaN(d.getTime())) {
+          timeLabel = selectedRange === '24h'
+            ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
+            : `${d.toLocaleDateString([], { weekday: 'short' })} ${d.getHours()}:00`;
+        }
+      } catch {
+        timeLabel = pt.time;
+      }
+
+      return {
+        time: timeLabel,
+        pm25: pt.pm25 ?? 0,
+        pm10: pt.pm10 ?? 0,
+        no2: pt.no2 ?? 0,
+        aqi: pt.indicativeAqi ?? pt.pm25 ?? 0,
+        annotation: pt.isCurrentHour ? 'Current Hour' : undefined,
+        isCurrentHour: pt.isCurrentHour,
+      };
+    });
+  } else if (data && data.length > 0) {
+    chartPoints = data.map((d) => ({
+      time: d.time,
+      pm25: d.pm25,
+      pm10: d.pm10,
+      no2: d.no2,
+      aqi: d.aqi,
+      annotation: d.annotation,
+      isCurrentHour: !d.isHistorical,
+    }));
+  }
+
+  const getMetricKey = () => {
+    switch (selectedPollutant) {
+      case 'pm25':
+        return 'pm25';
+      case 'pm10':
+        return 'pm10';
+      case 'no2':
+        return 'no2';
+      case 'aqi':
+        return 'aqi';
+    }
+  };
+
+  const getStrokeColor = () => {
+    switch (selectedPollutant) {
+      case 'pm25':
+        return '#F16B77';
+      case 'pm10':
+        return '#F6C453';
+      case 'no2':
+        return '#53C7F5';
+      case 'aqi':
+        return '#37E6B5';
+    }
+  };
+
+  const strokeColor = getStrokeColor();
+
+  const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
-      const point = payload[0].payload as DiurnalForecastPoint;
+      const pt = payload[0].payload;
       return (
         <div className="p-3 rounded-xl bg-[#142235]/95 backdrop-blur-md border border-[#1F334E] shadow-2xl text-xs space-y-1">
           <div className="flex items-center justify-between gap-4 font-heading text-[10px] text-outline">
-            <span>{point.time} • {point.isHistorical ? 'MEASURED TELEMETRY' : 'AI GENERATIVE FORECAST'}</span>
-            {point.annotation && (
-              <span className="text-secondary font-bold">{point.annotation}</span>
+            <span>{pt.time} • CAMS Atmospheric Dispersion</span>
+            {pt.annotation && (
+              <span className="text-secondary font-bold">{pt.annotation}</span>
             )}
           </div>
           <div className="flex items-baseline gap-2">
             <span className="font-heading text-base font-bold text-on-surface">
-              AQI {point.aqi}
+              Indicative AQI: {pt.aqi}
             </span>
-            <span className="font-mono text-outline">PM2.5: {point.pm25} µg/m³</span>
+            <span className="font-mono text-outline">PM2.5: {pt.pm25} µg/m³</span>
           </div>
           <div className="flex items-center gap-2 text-[10px] text-on-surface-variant pt-1 border-t border-[#1F334E]">
-            <span>PM10: {point.pm10} µg</span>
+            <span>PM10: {pt.pm10} µg/m³</span>
             <span>•</span>
-            <span>NO₂: {point.no2} ppb</span>
+            <span>NO₂: {pt.no2} µg/m³</span>
           </div>
         </div>
       );
@@ -58,15 +134,15 @@ export function AirQualityChart({ data }: AirQualityChartProps) {
         <div>
           <div className="flex items-center gap-2">
             <h3 className="font-heading text-base lg:text-lg text-on-surface font-bold">
-              24-Hour Diurnal Trajectory & Predictive Horizon
+              Diurnal Trajectory & Predictive Horizon
             </h3>
             <span className="font-heading text-[10px] px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary font-bold border border-secondary/30 flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-secondary" />
-              AI Synthetic Model
+              Open-Meteo CAMS Ensemble
             </span>
           </div>
           <p className="text-xs text-on-surface-variant mt-1">
-            Continuous ground sensor telemetry paired with AERIS atmospheric dispersion simulation.
+            Modeled atmospheric pollution dispersion curve computed by Copernicus Atmospheric Service (~40km grid).
           </p>
         </div>
 
@@ -86,94 +162,94 @@ export function AirQualityChart({ data }: AirQualityChartProps) {
                     : 'text-on-surface-variant hover:text-on-surface'
                 )}
               >
-                {key === 'pm25' ? 'PM2.5' : key === 'pm10' ? 'PM10' : key === 'no2' ? 'NO₂' : 'AQI Agg.'}
+                {key === 'pm25' ? 'PM2.5' : key === 'pm10' ? 'PM10' : key === 'no2' ? 'NO₂' : 'Indicative AQI'}
               </button>
             ))}
           </div>
 
           {/* Time range */}
           <div className="flex items-center p-1 rounded-lg bg-[#101C2B] border border-[#1F334E]">
-            {(['24h', '3day', '7day'] as const).map((range) => (
+            {(['24h', '3day', '5day'] as const).map((range) => (
               <button
                 key={range}
                 type="button"
                 onClick={() => setSelectedRange(range)}
                 className={cn(
-                  'px-2.5 py-1 rounded text-[11px] font-mono transition-all',
+                  'px-2.5 py-1 rounded text-xs font-heading font-medium transition-all',
                   selectedRange === range
-                    ? 'bg-[#1F334E] text-on-surface font-semibold'
-                    : 'text-on-surface-variant hover:text-on-surface'
+                    ? 'bg-[#19202D] text-on-surface font-bold border border-[#1F334E]'
+                    : 'text-outline hover:text-on-surface'
                 )}
               >
-                {range === '24h' ? 'Today (24h)' : range === '3day' ? '3-Day AI' : '7-Day Hist'}
+                {range.toUpperCase()}
               </button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Interactive Recharts Canvas */}
-      <div className="w-full h-72 relative">
+      {/* Recharts Area Chart */}
+      <div className="w-full h-72">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <AreaChart data={chartPoints} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
-              <linearGradient id="chartEmeraldGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#37E6B5" stopOpacity={0.35} />
-                <stop offset="95%" stopColor="#37E6B5" stopOpacity={0.0} />
+              <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={strokeColor} stopOpacity={0.35} />
+                <stop offset="95%" stopColor={strokeColor} stopOpacity={0.0} />
               </linearGradient>
             </defs>
+
             <XAxis
               dataKey="time"
-              stroke="#85948C"
+              stroke="#A5B7C8"
               fontSize={11}
               tickLine={false}
               axisLine={{ stroke: '#1F334E' }}
             />
             <YAxis
-              stroke="#85948C"
+              stroke="#A5B7C8"
               fontSize={11}
               tickLine={false}
               axisLine={{ stroke: '#1F334E' }}
             />
             <Tooltip content={<CustomTooltip />} />
-            <ReferenceLine y={50} stroke="#43D9A3" strokeDasharray="3 3" opacity={0.3} label={{ value: 'Good (50)', fill: '#43D9A3', fontSize: 9, position: 'right' }} />
-            <ReferenceLine y={100} stroke="#53C7F5" strokeDasharray="3 3" opacity={0.3} label={{ value: 'Moderate (100)', fill: '#53C7F5', fontSize: 9, position: 'right' }} />
-            <ReferenceLine y={150} stroke="#F6C453" strokeDasharray="3 3" opacity={0.4} label={{ value: 'Unhealthy (150)', fill: '#F6C453', fontSize: 9, position: 'right' }} />
+
+            {/* Reference threshold lines */}
+            <ReferenceLine
+              y={60}
+              stroke="#F6C453"
+              strokeDasharray="3 3"
+              label={{ value: 'CPCB Satisfactory Threshold (60)', fill: '#F6C453', fontSize: 10, position: 'right' }}
+            />
+
             <Area
               type="monotone"
-              dataKey={selectedPollutant}
-              stroke="#37E6B5"
+              dataKey={getMetricKey()}
+              stroke={strokeColor}
               strokeWidth={2.5}
               fillOpacity={1}
-              fill="url(#chartEmeraldGrad)"
+              fill="url(#chartGradient)"
             />
           </AreaChart>
         </ResponsiveContainer>
       </div>
 
-      {/* Chart Legend & Telemetry Status */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-[#1F334E]/60 text-xs">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="w-3.5 h-1 rounded bg-primary" />
-            <span className="text-on-surface">Measured In-Situ Data</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-3.5 h-1 rounded bg-secondary border-b border-dashed" />
-            <span className="text-on-surface">AI Generative Forecast</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded bg-secondary/30" />
-            <span className="text-outline">95% Confidence Corridor</span>
-          </div>
+      {/* Chart Footer Diagnostic Summary */}
+      <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-[#1F334E] text-xs">
+        <div className="flex items-center gap-4 text-outline font-mono">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: strokeColor }} />
+            Active Parameter: {selectedPollutant.toUpperCase()}
+          </span>
+          <span>•</span>
+          <span>Inversion Convection Model</span>
         </div>
 
-        <div className="flex items-center gap-2 font-mono text-[11px] text-outline">
-          <span className="w-2 h-2 rounded-full bg-primary" />
-          <span>Thermal boundary layer expected to collapse at 17:30 IST</span>
+        <div className="flex items-center gap-2 text-on-surface-variant font-mono text-[11px]">
+          <Activity className="w-3.5 h-3.5 text-primary" />
+          <span>Resolution: Hourly timestep / Copernicus CAMS Ensemble</span>
         </div>
       </div>
     </div>
   );
 }
-
