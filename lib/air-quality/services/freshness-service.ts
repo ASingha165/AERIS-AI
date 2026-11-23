@@ -1,41 +1,25 @@
 import { DataFreshness } from '@/types/air-quality';
 
 export class FreshnessService {
-  /**
-   * Freshness thresholds (in hours):
-   * < 2 hours: LIVE (Current real-time observation)
-   * 2 - 12 hours: RECENT (Recent observation within same diurnal cycle)
-   * 12 - 48 hours: STALE (Stale observation, not representative of current dispersion)
-   * > 48 hours or missing: UNAVAILABLE
-   */
   public static readonly LIVE_THRESHOLD_HOURS = 2;
   public static readonly RECENT_THRESHOLD_HOURS = 12;
   public static readonly STALE_THRESHOLD_HOURS = 48;
+  private static readonly FUTURE_CLOCK_SKEW_TOLERANCE_HOURS = 1;
 
   public static getFreshness(timestampIso: string | null | undefined): DataFreshness {
     if (!timestampIso) return 'UNAVAILABLE';
 
     const timestampMs = new Date(timestampIso).getTime();
-    if (isNaN(timestampMs)) return 'UNAVAILABLE';
+    if (!Number.isFinite(timestampMs)) return 'UNAVAILABLE';
 
-    const nowMs = Date.now();
-    const diffHours = (nowMs - timestampMs) / (1000 * 60 * 60);
+    const diffHours = (Date.now() - timestampMs) / (1000 * 60 * 60);
 
-    // If future timestamp (e.g. slight clock drift), treat as LIVE
-    if (diffHours < 0 && diffHours > -1) {
-      return 'LIVE';
-    }
-
-    if (diffHours <= this.LIVE_THRESHOLD_HOURS) {
-      return 'LIVE';
-    }
-    if (diffHours <= this.RECENT_THRESHOLD_HOURS) {
-      return 'RECENT';
-    }
-    if (diffHours <= this.STALE_THRESHOLD_HOURS) {
-      return 'STALE';
-    }
-
+    // Allow small clock skew, but do not classify materially future-dated data as live.
+    if (diffHours < -this.FUTURE_CLOCK_SKEW_TOLERANCE_HOURS) return 'UNAVAILABLE';
+    if (diffHours < 0) return 'LIVE';
+    if (diffHours <= this.LIVE_THRESHOLD_HOURS) return 'LIVE';
+    if (diffHours <= this.RECENT_THRESHOLD_HOURS) return 'RECENT';
+    if (diffHours <= this.STALE_THRESHOLD_HOURS) return 'STALE';
     return 'UNAVAILABLE';
   }
 
@@ -43,10 +27,9 @@ export class FreshnessService {
     if (!timestampIso) return 'No sync timestamp';
 
     const timestampMs = new Date(timestampIso).getTime();
-    if (isNaN(timestampMs)) return 'Invalid date';
+    if (!Number.isFinite(timestampMs)) return 'Invalid date';
 
     const diffMinutes = Math.floor((Date.now() - timestampMs) / (1000 * 60));
-
     if (diffMinutes < 1) return 'Just now';
     if (diffMinutes < 60) return `${diffMinutes}m ago`;
 

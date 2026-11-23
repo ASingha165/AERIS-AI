@@ -12,30 +12,22 @@ export interface OpenMeteoResult {
 }
 
 /**
- * Open-Meteo Air Quality Provider
- * Endpoint: https://air-quality-api.open-meteo.com/v1/air-quality
- * 
- * Provides numerical atmospheric dispersion reanalysis and forecasts.
- * Note on spatial resolution:
- * - Outside Europe: Copernicus Atmosphere Monitoring Service (CAMS) Global model (~0.4° ≈ 40 km resolution)
- * - Inside Europe: CAMS European Regional Ensemble (~0.1° ≈ 11 km resolution)
- * 
- * IMPORTANT: Forecast points represent grid-cell atmospheric model estimates, NOT ground monitoring stations.
+ * Open-Meteo Air Quality Provider.
+ * AERIS targets Indian urban locations and pins requests to CAMS Global.
+ * CAMS Global is a modeled grid product (~0.4° / ~45 km, 3-hourly), never a
+ * substitute for a local ground monitoring station.
  */
 export class OpenMeteoProvider {
   private static readonly BASE_URL = 'https://air-quality-api.open-meteo.com/v1/air-quality';
   private static readonly TIMEOUT_MS = 8000;
 
   public static async getForecast(latitude: number, longitude: number): Promise<OpenMeteoResult> {
-    const isEurope = latitude >= 30 && latitude <= 72 && longitude >= -25 && longitude <= 45;
-    const modelResolution = isEurope
-      ? 'CAMS European Regional Ensemble (~11km grid)'
-      : 'Copernicus Global Atmospheric Model (CAMS ~40km grid)';
+    const modelResolution = 'CAMS Global (~0.4° / ~45 km grid; 3-hourly)';
 
     const attribution: SourceAttribution = {
       provider: 'Open-Meteo',
-      datasetName: 'Open-Meteo Air Quality API (Copernicus CAMS Ensemble)',
-      attributionText: 'Modeled atmospheric dispersion forecast data provided by Open-Meteo via Copernicus CAMS.',
+      datasetName: 'Open-Meteo Air Quality API (CAMS Global)',
+      attributionText: 'Modeled atmospheric dispersion forecast from the Copernicus Atmosphere Monitoring Service (CAMS) Global domain.',
       url: 'https://open-meteo.com/en/docs/air-quality-api',
       modelResolution,
       isStationObservation: false,
@@ -50,6 +42,7 @@ export class OpenMeteoProvider {
     );
     url.searchParams.set('timezone', 'auto');
     url.searchParams.set('forecast_days', '5');
+    url.searchParams.set('domains', 'cams_global');
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.TIMEOUT_MS);
@@ -59,12 +52,10 @@ export class OpenMeteoProvider {
         signal: controller.signal,
         headers: {
           'Accept': 'application/json',
-          'User-Agent': 'AERIS-AI/2.0 (Environmental Intelligence)',
+          'User-Agent': 'AERIS-AI/2.1 (Environmental Intelligence)',
         },
-        next: { revalidate: 900 }, // 15-min cache
+        next: { revalidate: 900 },
       });
-
-      clearTimeout(timeoutId);
 
       if (!res.ok) {
         return {
@@ -91,15 +82,14 @@ export class OpenMeteoProvider {
 
       const data = parsed.data;
       const hourlyForecast: HourlyForecastPoint[] = [];
-
       const times = data.hourly.time;
-      const nowIso = new Date().toISOString();
       let currentHourPoint: HourlyForecastPoint | null = null;
       let minTimeDiff = Infinity;
 
       for (let i = 0; i < times.length; i++) {
         const timeStr = times[i];
         const dateObj = new Date(timeStr);
+        if (!Number.isFinite(dateObj.getTime())) continue;
         const hour = dateObj.getHours();
 
         const pm25Raw = data.hourly.pm2_5?.[i] ?? null;
@@ -109,12 +99,10 @@ export class OpenMeteoProvider {
         const o3Raw = data.hourly.ozone?.[i] ?? null;
         const coRaw = data.hourly.carbon_monoxide?.[i] ?? null;
 
-        // Normalize CO if in µg/m³
         const coNorm = coRaw !== null
           ? normalizeConcentrationForCPCB('CO', coRaw, 'µg/m³')?.value ?? null
           : null;
 
-        // Calculate indicative sub-index for visualization
         let indicativeAqi: number | null = null;
         if (pm25Raw !== null) {
           indicativeAqi = calculateSubIndex('PM2.5', pm25Raw);
@@ -137,30 +125,26 @@ export class OpenMeteoProvider {
 
         hourlyForecast.push(point);
 
-        // Track closest point to current wall clock time
-        const diff = Math.abs(dateObj.getTime() - new Date(nowIso).getTime());
+        const diff = Math.abs(dateObj.getTime() - Date.now());
         if (diff < minTimeDiff) {
           minTimeDiff = diff;
           currentHourPoint = { ...point, isCurrentHour: true };
         }
       }
 
-      return {
-        success: true,
-        attribution,
-        hourlyForecast,
-        currentHourPoint,
-      };
-    } catch (err: any) {
-      clearTimeout(timeoutId);
-      const isAbort = err.name === 'AbortError';
+      return { success: true, attribution, hourlyForecast, currentHourPoint };
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error('Unknown network error');
+      const isAbort = error.name === 'AbortError';
       return {
         success: false,
         attribution,
         hourlyForecast: [],
         currentHourPoint: null,
-        error: isAbort ? 'Open-Meteo request timed out after 8000ms' : (err.message || 'Network error'),
+        error: isAbort ? `Open-Meteo request timed out after ${this.TIMEOUT_MS}ms` : error.message,
       };
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 }

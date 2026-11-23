@@ -10,18 +10,14 @@ interface CacheEntry {
 }
 
 export class AirQualityService {
-  // In-memory cache for API route responses (10 minutes TTL)
   private static cache = new Map<string, CacheEntry>();
-  private static readonly CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
+  private static readonly CACHE_TTL_MS = 10 * 60 * 1000;
 
   private static getCacheKey(lat: number, lon: number, radiusMeters: number): string {
-    return `${lat.toFixed(2)}_${lon.toFixed(2)}_${radiusMeters}`;
+    // Four decimal places (~11 m latitude precision) avoids merging nearby neighborhoods.
+    return `${lat.toFixed(4)}_${lon.toFixed(4)}_${radiusMeters}`;
   }
 
-  /**
-   * Fetch complete air quality telemetry and forecast for coordinates.
-   * Runs OpenAQ (ground observations) and Open-Meteo (model forecast) in parallel.
-   */
   public static async getAirQualityData(
     latitude: number,
     longitude: number,
@@ -31,21 +27,12 @@ export class AirQualityService {
     const cacheKey = this.getCacheKey(latitude, longitude, radiusMeters);
     const cached = this.cache.get(cacheKey);
 
-    if (cached && cached.expiresAt > Date.now()) {
-      return cached.data;
-    }
+    if (cached && cached.expiresAt > Date.now()) return cached.data;
 
-    // Resolve location metadata
     const location: LocationMetadata = customLocationName
-      ? {
-          name: customLocationName,
-          country: 'India',
-          latitude,
-          longitude,
-        }
+      ? { name: customLocationName, country: 'India', latitude, longitude }
       : LocationService.getNearestPredefinedLocation(latitude, longitude);
 
-    // Run providers in parallel
     const [openaqSettled, openMeteoSettled] = await Promise.allSettled([
       OpenAQProvider.getNearestObservations(latitude, longitude, radiusMeters),
       OpenMeteoProvider.getForecast(latitude, longitude),
@@ -59,7 +46,7 @@ export class AirQualityService {
             attribution: {
               provider: 'OpenAQ',
               datasetName: 'OpenAQ API v3 Global Station Telemetry',
-              attributionText: 'Official ground monitoring station observations aggregated via OpenAQ.',
+              attributionText: 'Latest measurements reported by monitoring stations via OpenAQ.',
               url: 'https://openaq.org',
               isStationObservation: true,
             },
@@ -76,9 +63,10 @@ export class AirQualityService {
             success: false,
             attribution: {
               provider: 'Open-Meteo',
-              datasetName: 'Open-Meteo Air Quality API',
-              attributionText: 'Modeled atmospheric dispersion forecast data provided by Open-Meteo.',
-              url: 'https://open-meteo.com',
+              datasetName: 'Open-Meteo Air Quality API (CAMS Global)',
+              attributionText: 'Modeled atmospheric dispersion forecast from CAMS Global via Open-Meteo.',
+              url: 'https://open-meteo.com/en/docs/air-quality-api',
+              modelResolution: 'CAMS Global (~0.4° / ~45 km grid; 3-hourly)',
               isStationObservation: false,
             },
             hourlyForecast: [],
@@ -86,14 +74,12 @@ export class AirQualityService {
             error: openMeteoSettled.reason?.message || 'Failed to query Open-Meteo',
           };
 
-    // Synthesize into verified standard response
     const normalizedResponse = NormalizationService.synthesize(
       location,
       openaqResult,
       openMeteoResult
     );
 
-    // Cache valid response
     this.cache.set(cacheKey, {
       data: normalizedResponse,
       expiresAt: Date.now() + this.CACHE_TTL_MS,

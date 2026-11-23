@@ -3,13 +3,13 @@ import { z } from 'zod';
 export const CoordinatesQuerySchema = z.object({
   latitude: z.coerce.number().min(-90).max(90),
   longitude: z.coerce.number().min(-180).max(180),
-  radius: z.coerce.number().min(1000).max(100000).optional().default(25000), // meters (default 25km)
+  radius: z.coerce.number().min(1000).max(25000).optional().default(25000), // OpenAQ v3 maximum radius is 25 km
 });
 
 export const AirQualityQuerySchema = z.object({
   lat: z.coerce.number().min(-90).max(90),
   lon: z.coerce.number().min(-180).max(180),
-  radius: z.coerce.number().min(1000).max(100000).optional().default(25000),
+  radius: z.coerce.number().min(1000).max(25000).optional().default(25000),
 });
 
 export const LocationSearchQuerySchema = z.object({
