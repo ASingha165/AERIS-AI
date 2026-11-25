@@ -25,7 +25,7 @@ export const OpenMeteoAirQualityResponseSchema = z.object({
   utc_offset_seconds: z.number().optional(),
   timezone: z.string().optional(),
   timezone_abbreviation: z.string().optional(),
-  hourly_units: z.record(z.string()).optional(),
+  hourly_units: z.record(z.string(), z.string()).optional(),
   hourly: z.object({
     time: z.array(z.string()),
     pm2_5: z.array(z.number().nullable()).optional(),

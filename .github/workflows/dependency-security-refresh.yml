@@ -29,6 +29,11 @@ jobs:
       - name: Upgrade Next.js to the patched 15.x maintenance release
         run: npm install --save-exact next@15.5.29 eslint-config-next@15.5.29 zod@4.6.7 --no-fund --no-progress
 
+      - name: Pin patched PostCSS for all dependency paths
+        run: |
+          npm pkg set 'overrides.postcss=8.5.33'
+          npm install --no-fund --no-progress
+
       - name: Apply non-breaking dependency security fixes
         run: npm audit fix --no-fund --no-progress || true
 
