@@ -7,7 +7,7 @@
 | **Stage 1** | **Engineering Foundation & Frontend Implementation** | **Completed** | **November 2026** |
 | **Stage 2** | Environmental API Integration & Station Ingestion | **Completed** | November 2026 |
 | **Stage 3** | Google Gemini API AI Copilot Integration | **Merged; live API verification pending** | November 2026 |
-| **Stage 4** | Supabase Database & User Personalization | **Foundation in review** | November 2026 |
+| **Stage 4** | Supabase Database & User Personalization | **Foundation merged; live integration pending** | November 2026 |
 | **Stage 5** | End-to-End Verification & Production Vercel Deploy | Pending | November 2026 |
 
 ---
@@ -47,11 +47,11 @@
 
 ---
 
-## Stage 4: Supabase PostgreSQL & Auth (Foundation in review)
+## Stage 4: Supabase PostgreSQL & Auth (Foundation merged)
 - [x] Initial migration for profiles, households, saved locations, preferences, and saved schedules.
 - [x] Row Level Security policies and owner-scoped foreign keys.
-- [x] Browser-local settings persistence with Zod validation.
-- [ ] Create/configure a Supabase project and apply the migration.
+- [x] Browser-local settings persistence with Zod validation (not cloud-synced).
+- [ ] Create/configure a Supabase project and apply the migration (requires project owner access).
 - [ ] Implement Supabase Auth and secure session handling.
 - [ ] Add server/client Supabase data access and sync non-sensitive user preferences.
 - [ ] Run cross-user RLS isolation tests.

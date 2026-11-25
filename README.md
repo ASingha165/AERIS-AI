@@ -1,6 +1,6 @@
 # AERIS-AI — "Breathe Smarter. Live Better."
 
-[![Next.js 15](https://img.shields.io/badge/Next.js-15.0.3-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![Next.js 15](https://img.shields.io/badge/Next.js-15.0.8-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![TypeScript Strict](https://img.shields.io/badge/TypeScript-5.6_Strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Tests Passing](https://img.shields.io/badge/Tests-Stage_2_Verified-success?style=for-the-badge)](https://github.com/ASingha165/AERIS-AI)
@@ -21,7 +21,7 @@ AERIS-AI is an environmental decision-support platform combining outdoor air-qua
 - CPCB-methodology sub-index calculations and explicit insufficient-data states.
 - Location search, freshness metadata, and API-level validation.
 
-## Stage 3 — Gemini Copilot (merged; runtime verification pending)
+## Stage 3 — Gemini Copilot (merged; live API verification pending)
 
 - Server-side Gemini 3.5 Flash-Lite integration through the Google Generative Language REST API.
 - `POST /api/copilot` validates message, bounded conversation history, and selected coordinates.
@@ -32,12 +32,12 @@ AERIS-AI is an environmental decision-support platform combining outdoor air-qua
 
 **Verification:** GitHub Actions has passed dependency installation, type-check, unit tests, lint, and production build on the feature branch. A real Gemini response still requires a valid server-side `GEMINI_API_KEY`; live API smoke testing and browser QA remain outstanding.
 
-## Stage 4 — Supabase persistence foundation (in review)
+## Stage 4 — Supabase persistence foundation (merged; cloud integration pending)
 
-- Initial PostgreSQL migration for user profiles, non-clinical household configuration, saved locations, preferences, and schedules.
+- Initial PostgreSQL migration for user profiles, non-clinical household configuration, saved locations, preferences, and schedules is merged into `main`.
 - Row Level Security and owner-scoped foreign keys are defined for all cloud tables.
-- Settings preferences now persist in the current browser with runtime schema validation.
-- Supabase project setup, migration execution, Auth, and cloud synchronization still require a real Supabase project and end-to-end verification.
+- Settings preferences persist in the current browser with runtime schema validation; they are not cloud-synced.
+- Supabase project creation, migration execution, Auth, and cloud synchronization still require a real Supabase project and end-to-end verification.
 - Sensitive household member health details are intentionally excluded from cloud storage until explicit consent and privacy controls are implemented.
 
 ## Setup
@@ -94,6 +94,6 @@ AERIS provides environmental information, not clinical diagnosis or treatment. T
 - [x] Stage 1 — engineering foundation and Stitch-based UI.
 - [x] Stage 2 — OpenAQ, Open-Meteo, CPCB-methodology engine.
 - [x] Stage 2.1 — data-integrity hardening merged into `main`; regression checks pass.
-- [ ] Stage 3 — Gemini Copilot merged into `main`; CI passes. Live Gemini API smoke test and browser QA remain.
-- [ ] Stage 4 — Supabase schema foundation in review; apply migration, configure Auth, and verify RLS with a real project.
-- [ ] Stage 5 — end-to-end QA and production deployment.
+- [x] Stage 3 — Gemini Copilot merged into `main`; CI passes. Live Gemini API smoke test and browser QA remain.
+- [x] Stage 4 foundation — schema, RLS policies, and browser preference persistence merged into `main`; apply migration, configure Auth, and verify RLS with a real project remain.
+- [ ] Stage 5 — end-to-end QA, external API smoke tests, accessibility review, and production deployment.
