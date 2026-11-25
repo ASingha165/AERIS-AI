@@ -87,7 +87,7 @@ export default function SettingsPage() {
                 </label>
                 <select
                   value={defaultLocation}
-                  onChange={(e) => setDefaultLocation(e.target.value)}
+                  onChange={(e) => setDefaultLocation(e.target.value as 'Kolkata Park Street' | 'Kolkata Salt Lake' | 'Mumbai BKC' | 'Delhi Anand Vihar')}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[#101C2B] text-on-surface border border-[#1F334E] focus:outline-none focus:border-primary-container"
                 >
                   <option value="Kolkata Park Street">Kolkata, WB — Park Street Ward 63</option>
