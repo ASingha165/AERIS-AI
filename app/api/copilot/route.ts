@@ -6,7 +6,7 @@ import { buildGroundingContext } from '@/lib/copilot/grounding';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const MODEL = 'gemini-2.5-flash';
+const MODEL = 'gemini-3.5-flash-lite';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
 
@@ -80,9 +80,7 @@ export async function POST(request: NextRequest) {
         systemInstruction: { parts: [{ text: systemInstruction }] },
         contents,
         generationConfig: {
-          temperature: 0.25,
           maxOutputTokens: 900,
-          responseMimeType: 'text/plain',
         },
       }),
       signal: AbortSignal.timeout(20000),

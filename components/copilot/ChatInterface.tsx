@@ -99,7 +99,7 @@ export function ChatInterface() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#142235] text-on-surface-variant text-xs font-mono border border-[#1F334E]">
             <Satellite className="w-3.5 h-3.5 text-secondary" />
-            <span>Gemini 2.5 Flash</span>
+            <span>Gemini 3.5 Flash-Lite</span>
             <span className="text-outline">•</span>
             <span className="text-primary font-bold">Server-side</span>
           </div>

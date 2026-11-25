@@ -104,12 +104,12 @@ AERIS-AI is structured into a modular, decoupled architecture:
 - **Stage 1 (Complete):** Engineering foundation, Stitch design implementation, route layouts, isolated demonstration datasets.
 - **Stage 2 (Complete):** Live environmental data integration, Open-Meteo CAMS provider, OpenAQ v3 provider, CPCB calculation engine, freshness classifier, `/api/air-quality`, `/api/locations/search`, full unit test suite, and production build verification.
 - **Stage 2.1 (Complete):** Data-integrity hardening merged into `main`; regression and CI checks pass.
-- **Stage 3 (Merged; runtime verification pending):** Gemini 2.5 Flash Copilot route and UI merged into `main`; CI passes. Live API smoke test and browser QA remain.
+- **Stage 3 (Merged; runtime verification pending):** Gemini 3.5 Flash-Lite Copilot route and UI merged into `main`; CI passes. Live API smoke test and browser QA remain.
 - **Stage 4 (Pending):** Supabase PostgreSQL Database & Auth.
 - **Stage 5 (Pending):** End-to-End Testing & Production Deployment on Vercel.
 
 
-## Stage 3 — Gemini Copilot implementation guardrails
+## Stage 3 — Gemini 3.5 Flash-Lite Copilot implementation guardrails
 
 - Keep `GEMINI_API_KEY` server-side only; never expose it through a `NEXT_PUBLIC_` variable or log its value.
 - Validate every request with the Zod schema and retain bounded message/history lengths and geographic coordinate ranges.

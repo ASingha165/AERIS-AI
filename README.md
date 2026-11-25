@@ -23,7 +23,7 @@ AERIS-AI is an environmental decision-support platform combining outdoor air-qua
 
 ## Stage 3 — Gemini Copilot (merged; runtime verification pending)
 
-- Server-side Gemini 2.5 Flash integration through the Google Generative Language REST API.
+- Server-side Gemini 3.5 Flash-Lite integration through the Google Generative Language REST API.
 - `POST /api/copilot` validates message, bounded conversation history, and selected coordinates.
 - The server retrieves current AERIS environmental context and injects provider provenance into the model prompt.
 - System instructions prohibit invented measurements, false station claims, unsupported CPCB certification, and medical diagnosis or treatment.
