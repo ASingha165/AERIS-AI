@@ -11,8 +11,8 @@ export async function GET(request: NextRequest) {
     const nameParam = searchParams.get('name') || undefined;
 
     const parseResult = AirQualityQuerySchema.safeParse({
-      lat: latParam,
-      lon: lonParam,
+      lat: latParam?.trim() ? latParam : undefined,
+      lon: lonParam?.trim() ? lonParam : undefined,
       radius: radiusParam || undefined,
     });
 
