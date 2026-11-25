@@ -17,6 +17,7 @@ AERIS-AI is engineered as a modern full-stack environmental decision intelligenc
 │  - /api/air-quality (Dual-provider telemetry engine)   │
 │  - /api/locations/search (Geocoding & city search)     │
 │  - /api/copilot (Gemini AI Reasoning Engine - Stage 3) │
+│  - Supabase PostgreSQL (Stage 4; RLS-protected data)  │
 └───────────────────────────┬────────────────────────────┘
                             │
          ┌──────────────────┴──────────────────┐
@@ -30,7 +31,11 @@ AERIS-AI is engineered as a modern full-stack environmental decision intelligenc
 
 ---
 
-## 2. Directory & Service Architecture
+## 2. Stage 4 — User-owned persistence
+
+The initial Supabase migration defines `profiles`, `households`, `saved_locations`, `user_preferences`, and `saved_schedules`. Row Level Security is enabled on every table and policies scope rows to `auth.uid()`. Composite foreign keys prevent saved schedules and default locations from referencing another user's saved location. Family-member health details are deliberately excluded pending explicit consent and privacy controls.
+
+## 3. Directory & Service Architecture
 
 ```
 lib/air-quality/
@@ -54,7 +59,7 @@ lib/air-quality/
 
 ---
 
-## 3. API Contract Specifications
+## 4. API Contract Specifications
 
 ### `GET /api/air-quality`
 - **Query Parameters:**

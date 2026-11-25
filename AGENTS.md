@@ -105,7 +105,7 @@ AERIS-AI is structured into a modular, decoupled architecture:
 - **Stage 2 (Complete):** Live environmental data integration, Open-Meteo CAMS provider, OpenAQ v3 provider, CPCB calculation engine, freshness classifier, `/api/air-quality`, `/api/locations/search`, full unit test suite, and production build verification.
 - **Stage 2.1 (Complete):** Data-integrity hardening merged into `main`; regression and CI checks pass.
 - **Stage 3 (Merged; runtime verification pending):** Gemini 3.5 Flash-Lite Copilot route and UI merged into `main`; CI passes. Live API smoke test and browser QA remain.
-- **Stage 4 (Pending):** Supabase PostgreSQL Database & Auth.
+- **Stage 4 (Foundation in review):** Supabase migration and owner-scoped RLS policies prepared; browser-only settings persistence implemented. Live Supabase project, Auth, and cloud sync remain pending.
 - **Stage 5 (Pending):** End-to-End Testing & Production Deployment on Vercel.
 
 
@@ -120,3 +120,14 @@ AERIS-AI is structured into a modular, decoupled architecture:
 - Do not diagnose, prescribe, or advise medication changes. Recommend qualified clinical or emergency support for urgent symptoms.
 - Do not infer or transmit household medical profiles. Such profile integration requires a separately reviewed consent, privacy, and data-minimization design.
 - Stage 3 is not complete until CI, live Gemini API smoke testing, and browser-level functional checks are recorded.
+
+
+## Stage 4 — Supabase and privacy guardrails
+
+- Apply only reviewed migrations under `supabase/migrations/`; every user-owned table must have RLS enabled and owner-scoped policies using `auth.uid()`.
+- Never use the service-role key in browser code or expose it with a `NEXT_PUBLIC_` prefix. The current foundation does not require or use it.
+- Use the anon/publishable key only with authenticated user sessions and RLS. Never treat the anon key as authorization.
+- Do not store family-member names, exact ages, asthma/cardiovascular flags, or respiratory-sensitivity details in cloud tables until an explicit consent flow, data-minimization policy, retention/deletion controls, and privacy review are approved.
+- Do not collect exact residential addresses. Store only the minimum location information needed for user-selected monitoring.
+- Browser-local settings are preferences only and must not be described as cloud-synced.
+- Stage 4 is not complete until a real Supabase project is configured, migrations are applied, Auth/session handling is implemented, and cross-user RLS isolation tests pass.

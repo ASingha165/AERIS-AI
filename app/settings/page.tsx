@@ -1,32 +1,58 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import {
-  Settings,
   Bell,
   MapPin,
   Database,
-  Sliders,
-  Shield,
   Save,
   CheckCircle2,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import {
+  DEFAULT_SETTINGS_PREFERENCES,
+  loadSettingsPreferences,
+  saveSettingsPreferences,
+} from '@/lib/preferences/settings';
 
 export default function SettingsPage() {
-  const [defaultLocation, setDefaultLocation] = useState('Kolkata Park Street');
-  const [aqiStandard, setAqiStandard] = useState<'CPCB-NAQI' | 'US-EPA'>('CPCB-NAQI');
-  const [alertThreshold, setAlertThreshold] = useState<number>(150);
-  const [emailAlerts, setEmailAlerts] = useState<boolean>(true);
-  const [pushAlerts, setPushAlerts] = useState<boolean>(true);
-  const [dataSourcePriority, setDataSourcePriority] = useState<string>('cpcb-first');
+  const [defaultLocation, setDefaultLocation] = useState(DEFAULT_SETTINGS_PREFERENCES.defaultLocation);
+  const [aqiStandard, setAqiStandard] = useState<'CPCB-NAQI' | 'US-EPA'>(DEFAULT_SETTINGS_PREFERENCES.aqiStandard);
+  const [alertThreshold, setAlertThreshold] = useState<number>(DEFAULT_SETTINGS_PREFERENCES.alertThreshold);
+  const [emailAlerts, setEmailAlerts] = useState<boolean>(DEFAULT_SETTINGS_PREFERENCES.emailAlerts);
+  const [pushAlerts, setPushAlerts] = useState<boolean>(DEFAULT_SETTINGS_PREFERENCES.pushAlerts);
+  const [dataSourcePriority, setDataSourcePriority] = useState<'cpcb-first' | 'open-meteo-blend'>(DEFAULT_SETTINGS_PREFERENCES.dataSourcePriority);
   const [savedSuccess, setSavedSuccess] = useState<boolean>(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const preferences = loadSettingsPreferences(window.localStorage);
+    setDefaultLocation(preferences.defaultLocation);
+    setAqiStandard(preferences.aqiStandard);
+    setAlertThreshold(preferences.alertThreshold);
+    setEmailAlerts(preferences.emailAlerts);
+    setPushAlerts(preferences.pushAlerts);
+    setDataSourcePriority(preferences.dataSourcePriority);
+  }, []);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 2000);
+    try {
+      saveSettingsPreferences(window.localStorage, {
+        defaultLocation,
+        aqiStandard,
+        alertThreshold,
+        emailAlerts,
+        pushAlerts,
+        dataSourcePriority,
+      });
+      setSaveError(null);
+      setSavedSuccess(true);
+      window.setTimeout(() => setSavedSuccess(false), 2500);
+    } catch {
+      setSavedSuccess(false);
+      setSaveError('Could not save preferences in this browser. Check available site storage and try again.');
+    }
   };
 
   return (
@@ -61,7 +87,7 @@ export default function SettingsPage() {
                 </label>
                 <select
                   value={defaultLocation}
-                  onChange={(e) => setDefaultLocation(e.target.value)}
+                  onChange={(e) => setDefaultLocation(e.target.value as 'Kolkata Park Street' | 'Kolkata Salt Lake' | 'Mumbai BKC' | 'Delhi Anand Vihar')}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[#101C2B] text-on-surface border border-[#1F334E] focus:outline-none focus:border-primary-container"
                 >
                   <option value="Kolkata Park Street">Kolkata, WB — Park Street Ward 63</option>
@@ -101,7 +127,7 @@ export default function SettingsPage() {
                   name="sourcePriority"
                   value="cpcb-first"
                   checked={dataSourcePriority === 'cpcb-first'}
-                  onChange={(e) => setDataSourcePriority(e.target.value)}
+                  onChange={(e) => setDataSourcePriority(e.target.value as 'cpcb-first' | 'open-meteo-blend')}
                   className="mt-1 accent-primary-container"
                 />
                 <div>
@@ -120,7 +146,7 @@ export default function SettingsPage() {
                   name="sourcePriority"
                   value="open-meteo-blend"
                   checked={dataSourcePriority === 'open-meteo-blend'}
-                  onChange={(e) => setDataSourcePriority(e.target.value)}
+                  onChange={(e) => setDataSourcePriority(e.target.value as 'cpcb-first' | 'open-meteo-blend')}
                   className="mt-1 accent-primary-container"
                 />
                 <div>
@@ -194,7 +220,9 @@ export default function SettingsPage() {
 
           {/* Save Button */}
           <div className="flex items-center justify-between pt-2">
-            {savedSuccess ? (
+            {saveError ? (
+              <span role="alert" className="text-xs font-mono text-danger">{saveError}</span>
+            ) : savedSuccess ? (
               <span className="inline-flex items-center gap-1.5 text-xs font-mono text-primary">
                 <CheckCircle2 className="w-4 h-4" />
                 Settings saved successfully
