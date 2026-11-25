@@ -1,0 +1,24 @@
+name: AERIS-AI Production Smoke
+
+on:
+  push:
+    branches:
+      - test/production-smoke-verification
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Verify public deployment and API contracts
+        env:
+          AERIS_BASE_URL: https://aeris-ai-steel.vercel.app
+        run: node scripts/production-smoke.mjs
