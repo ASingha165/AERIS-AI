@@ -28,58 +28,7 @@ export function RecommendationPreview({
   forecast,
   sources,
 }: RecommendationPreviewProps) {
-  // Derive dynamic activity windows from forecast if not explicitly passed
-  let windows: ActivityWindowRecommendation[] = activityWindows || [];
-
-  if (windows.length === 0 && forecast && forecast.length >= 12) {
-    // Generate realistic diurnal windows from actual forecast values
-    const morningPoint = forecast.find((p) => p.hour >= 6 && p.hour <= 8) || forecast[6] || forecast[0];
-    const middayPoint = forecast.find((p) => p.hour >= 12 && p.hour <= 15) || forecast[12] || forecast[0];
-    const eveningPoint = forecast.find((p) => p.hour >= 18 && p.hour <= 21) || forecast[18] || forecast[0];
-
-    const morningAqi = morningPoint?.pm25 ? Math.round(morningPoint.pm25 * 1.5) : 180;
-    const middayAqi = middayPoint?.pm25 ? Math.round(middayPoint.pm25 * 1.1) : 75;
-    const eveningAqi = eveningPoint?.pm25 ? Math.round(eveningPoint.pm25 * 1.6) : 210;
-
-    windows = [
-      {
-        id: 'win-morning',
-        title: 'Morning Ventilation / Commute',
-        timeRange: '06:30 - 08:30',
-        startHour: 6,
-        endHour: 8,
-        estimatedAqi: morningAqi,
-        status: morningAqi > 150 ? 'not-advised' : 'caution',
-        badgeLabel: morningAqi > 150 ? 'Seal Windows' : 'Mask (N95)',
-        explanation: 'Ground-level nocturnal inversion traps traffic particulates. Keep ventilation closed.',
-        pollutantFocus: 'PM2.5 & NO₂ Inversion Peak',
-      },
-      {
-        id: 'win-midday',
-        title: 'Midday Solar Convection Window',
-        timeRange: '12:00 - 15:30',
-        startHour: 12,
-        endHour: 15,
-        estimatedAqi: middayAqi,
-        status: middayAqi <= 100 ? 'optimal' : 'caution',
-        badgeLabel: middayAqi <= 100 ? 'Optimal Slot' : 'Mask (N95)',
-        explanation: 'Solar heating deepens atmospheric mixing boundary layer, diluting particulate concentration.',
-        pollutantFocus: 'Deep Convective Mixing',
-      },
-      {
-        id: 'win-evening',
-        title: 'Evening Rush & Sunset Inversion',
-        timeRange: '18:30 - 21:30',
-        startHour: 18,
-        endHour: 21,
-        estimatedAqi: eveningAqi,
-        status: eveningAqi > 200 ? 'not-advised' : 'caution',
-        badgeLabel: eveningAqi > 200 ? 'Not Advised' : 'Mask (N95)',
-        explanation: 'Secondary rush-hour traffic surge accompanied by surface cooling boundary compression.',
-        pollutantFocus: 'NO₂ & Traffic Particulates',
-      },
-    ];
-  }
+  const windows: ActivityWindowRecommendation[] = activityWindows ?? [];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
@@ -98,11 +47,12 @@ export function RecommendationPreview({
             </span>
           </div>
           <p className="text-xs text-on-surface-variant mt-1">
-            Chronological scheduling matrix computed against diurnal atmospheric boundary layer convection cycles.
+            Activity windows are withheld unless explicitly supported by evidence. Modeled pollution forecasts do not establish safe exposure hours.
           </p>
 
           {/* Activity Cards List */}
           <div className="flex flex-col gap-2.5 mt-4">
+            {windows.length === 0 && <p role="status" className="rounded-xl bg-[#101C2B] p-4 text-xs text-on-surface-variant">No validated activity windows available. Consult the modeled PM2.5 forecast and local public-health advice; no safe period can be guaranteed.</p>}
             {windows.map((item) => {
               const isOptimal = item.status === 'optimal';
               const isCaution = item.status === 'caution';
@@ -159,9 +109,9 @@ export function RecommendationPreview({
         </div>
 
         <div className="mt-4 pt-3 border-t border-[#1F334E] flex items-center justify-between text-xs">
-          <span className="text-outline">Plan outdoor exercises during solar convection windows</span>
+          <span className="text-outline">Forecast comparisons do not prove safe exposure</span>
           <span className="font-mono text-[11px] text-primary flex items-center gap-1">
-            Boundary Layer Diurnal Mode
+            Source-aware guidance
           </span>
         </div>
       </div>
@@ -262,7 +212,7 @@ export function RecommendationPreview({
           <span>Zero-Fabrication Standard</span>
           <span className="text-primary flex items-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-            Integrity Guaranteed
+            Provenance disclosed
           </span>
         </div>
       </div>
