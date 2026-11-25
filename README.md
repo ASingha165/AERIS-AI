@@ -1,6 +1,6 @@
 # AERIS-AI — "Breathe Smarter. Live Better."
 
-[![Next.js 15](https://img.shields.io/badge/Next.js-15.0.8-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![Next.js 15](https://img.shields.io/badge/Next.js-15.5.29-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![TypeScript Strict](https://img.shields.io/badge/TypeScript-5.6_Strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Tests Passing](https://img.shields.io/badge/Tests-Stage_2_Verified-success?style=for-the-badge)](https://github.com/ASingha165/AERIS-AI)
@@ -42,7 +42,7 @@ AERIS-AI is an environmental decision-support platform combining outdoor air-qua
 
 ## Setup
 
-Requirements: Node.js 20+ and npm.
+Requirements: Node.js 20+ and npm. Next.js 15.5.29 and Zod 4.6.7 are the current patched dependency targets; run `npm audit` before deployment.
 
 ```bash
 git clone https://github.com/ASingha165/AERIS-AI.git
