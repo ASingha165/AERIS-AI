@@ -87,32 +87,32 @@ function DashboardContent() {
       </div>
 
       {/* Hero AQI Command Card */}
-      <AQIOverview data={isDemoMode ? null : data} reading={DEMO_AIR_QUALITY_READING} />
+      <AQIOverview data={isDemoMode ? null : data} reading={isDemoMode ? DEMO_AIR_QUALITY_READING : undefined} />
 
       {/* 4 Primary Pollutant Bento Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <PollutantCard
           metric={!isDemoMode && data?.observations['PM2.5'] ? data.observations['PM2.5'] : undefined}
-          demoMetric={DEMO_AIR_QUALITY_READING.metrics['PM2.5']}
+          demoMetric={isDemoMode ? DEMO_AIR_QUALITY_READING.metrics['PM2.5'] : undefined}
         />
         <PollutantCard
           metric={!isDemoMode && data?.observations['PM10'] ? data.observations['PM10'] : undefined}
-          demoMetric={DEMO_AIR_QUALITY_READING.metrics['PM10']}
+          demoMetric={isDemoMode ? DEMO_AIR_QUALITY_READING.metrics['PM10'] : undefined}
         />
         <PollutantCard
           metric={!isDemoMode && data?.observations['NO2'] ? data.observations['NO2'] : undefined}
-          demoMetric={DEMO_AIR_QUALITY_READING.metrics['NO2']}
+          demoMetric={isDemoMode ? DEMO_AIR_QUALITY_READING.metrics['NO2'] : undefined}
         />
         <PollutantCard
           metric={!isDemoMode && data?.observations['O3'] ? data.observations['O3'] : undefined}
-          demoMetric={DEMO_AIR_QUALITY_READING.metrics['O3']}
+          demoMetric={isDemoMode ? DEMO_AIR_QUALITY_READING.metrics['O3'] : undefined}
         />
       </div>
 
       {/* 24-Hour Diurnal Trajectory Chart */}
       <AirQualityChart
         forecast={!isDemoMode && data?.forecast ? data.forecast : undefined}
-        data={DEMO_DIURNAL_FORECAST}
+        data={isDemoMode ? DEMO_DIURNAL_FORECAST : undefined}
       />
 
       {/* Activity Windows & Sensor Health Dual Panel */}

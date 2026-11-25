@@ -89,7 +89,7 @@ export function ActivitySelector({
                 : 'text-on-surface-variant hover:text-on-surface'
             )}
           >
-            Today (Nov 23)
+            Today
           </button>
           <button
             type="button"
@@ -101,7 +101,7 @@ export function ActivitySelector({
                 : 'text-on-surface-variant hover:text-on-surface'
             )}
           >
-            Tomorrow (Nov 24)
+            Tomorrow
           </button>
         </div>
       </div>
