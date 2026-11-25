@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       'Answer clearly in plain language. Use concise headings and bullets when useful.',
     ].join(' ');
 
-    const response = await fetch(GEMINI_URL, {
+    let response = await fetch(GEMINI_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -86,6 +86,27 @@ export async function POST(request: NextRequest) {
       signal: AbortSignal.timeout(20000),
       cache: 'no-store',
     });
+
+    // If transient 503 (model experiencing temporary high demand), retry once after a short delay
+    if (response.status === 503) {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      response = await fetch(GEMINI_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey,
+        },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemInstruction }] },
+          contents,
+          generationConfig: {
+            maxOutputTokens: 900,
+          },
+        }),
+        signal: AbortSignal.timeout(20000),
+        cache: 'no-store',
+      });
+    }
 
     if (!response.ok) {
       const providerError = await response.json().catch(() => null);

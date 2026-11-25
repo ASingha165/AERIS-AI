@@ -79,6 +79,15 @@ export function ChatMessage({ message, onSelectActionChip }: ChatMessageProps) {
           {/* Top highlight bar */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-transparent opacity-80" />
 
+          {/* Main Answer Content (when plain answer is provided) */}
+          {message.content && !message.strategicRecommendation && (
+            <div className="p-4 rounded-xl bg-[#080F1C]/90 border border-[#1F334E] mb-4 shadow-inner">
+              <p className="text-xs md:text-sm text-on-surface leading-relaxed whitespace-pre-wrap">
+                {message.content}
+              </p>
+            </div>
+          )}
+
           {/* 1. Short Strategic Recommendation */}
           {message.strategicRecommendation && (
             <div className="p-4 rounded-xl bg-[#080F1C]/90 border border-[#1F334E] mb-4 shadow-inner">
