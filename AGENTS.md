@@ -131,3 +131,12 @@ AERIS-AI is structured into a modular, decoupled architecture:
 - Do not collect exact residential addresses. Store only the minimum location information needed for user-selected monitoring.
 - Browser-local settings are preferences only and must not be described as cloud-synced.
 - Stage 4 is not complete until a real Supabase project is configured, migrations are applied, Auth/session handling is implemented, and cross-user RLS isolation tests pass.
+
+
+## Challenge 6 evaluation hardening — 25 Nov 2026
+
+- Public landing page must never display hard-coded AQI or PM2.5 as current observations.
+- Planner may compare modeled CAMS PM2.5 hours, but must not claim official AQI, guaranteed safe outdoor windows, or invented percentage reductions in inhaled dose.
+- Demonstration pollutant data may render only when explicitly enabled as demo mode.
+- Forecast comparisons are pure, unit-tested, reject missing/negative/non-finite values and require at least three comparable daytime points.
+- Competition rank and score are external outcomes; no score increase is guaranteed by CI or code changes alone.

@@ -7,6 +7,7 @@ import { ActivitySelector } from '@/components/planner/ActivitySelector';
 import { useAirQuality } from '@/lib/context/AirQualityContext';
 import { DEMO_ROUTINE_ACTIVITIES } from '@/lib/demo-data';
 import type { RoutineActivity } from '@/types/planner';
+import { compareForecastHours } from '@/lib/air-quality/calculations/forecast-comparison';
 
 const kolkataDate = (date: Date) =>
   new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Kolkata' }).format(date);
@@ -24,12 +25,7 @@ export default function PlannerPage() {
 
   const candidates = useMemo(() => {
     if (!data || isDemoMode) return [];
-    return data.forecast
-      .filter(point => point.time.slice(0, 10) === date)
-      .filter(point => Number.isFinite(point.pm25) && point.pm25 !== null && point.pm25 >= 0)
-      .filter(point => point.hour >= 6 && point.hour <= 21)
-      .map(point => ({ time: point.time, hour: point.hour, pm25: point.pm25 as number }))
-      .sort((a, b) => a.pm25 - b.pm25 || a.hour - b.hour);
+    return compareForecastHours(data.forecast, date);
   }, [data, date, isDemoMode]);
 
   const preferred = candidates.length >= 3 ? candidates[0] : null;
