@@ -146,9 +146,12 @@ export function PollutantCard({ metric, demoMetric }: PollutantCardProps) {
             </span>
           </div>
         ) : isModeled ? (
-          <div className="flex items-center gap-1.5 text-secondary truncate">
+          <div
+            className="flex items-center gap-1.5 text-secondary truncate"
+            title="Modeled atmospheric dispersion estimate (Open-Meteo CAMS) — not a physical ground station measurement"
+          >
             <Sparkles className="w-3 h-3 shrink-0" />
-            <span className="truncate">CAMS Model (~40km grid)</span>
+            <span className="truncate">MODELED_FORECAST · CAMS</span>
           </div>
         ) : (
           <span className="text-outline">Illustrative Dataset</span>

@@ -209,19 +209,34 @@ export function RecommendationPreview({
             <div className="p-3 rounded-xl bg-[#101C2B] border border-[#1F334E] space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="font-heading text-xs font-bold text-on-surface flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-primary" />
+                  <span
+                    className={cn(
+                      'w-2 h-2 rounded-full',
+                      sources?.some((s) => s.provider === 'OpenAQ' && s.isStationObservation)
+                        ? 'bg-primary'
+                        : 'bg-warning'
+                    )}
+                  />
                   OpenAQ API v3
                 </span>
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-primary-container/20 text-primary">
-                  Ground Station Telemetry
-                </span>
+                {sources?.some((s) => s.provider === 'OpenAQ' && s.isStationObservation) ? (
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-primary-container/20 text-primary">
+                    Ground Station Active
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-warning/15 text-warning border border-warning/30">
+                    Unavailable (Using CAMS Fallback)
+                  </span>
+                )}
               </div>
               <p className="text-xs text-on-surface-variant">
-                Aggregates official physical monitoring stations (CPCB / State Pollution Control Boards) with strict radius discovery.
+                {sources?.some((s) => s.provider === 'OpenAQ' && s.isStationObservation)
+                  ? 'Aggregates official physical monitoring stations (CPCB / State Pollution Control Boards) with strict radius discovery.'
+                  : 'Ground station observations are currently unavailable (optional OPENAQ_API_KEY not configured or no eligible station in radius). Serving Open-Meteo CAMS forecast fallback.'}
               </p>
               <div className="flex items-center justify-between font-mono text-[10px] text-outline pt-1 border-t border-[#1F334E]/60">
-                <span>Auth: Server-Side X-API-Key</span>
-                <span>Configurable Search Radius</span>
+                <span>Optional Server-Side X-API-Key</span>
+                <span>Zero-Fabrication Guardrail</span>
               </div>
             </div>
 

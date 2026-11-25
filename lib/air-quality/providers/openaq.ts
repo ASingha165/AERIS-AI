@@ -30,7 +30,7 @@ export class OpenAQProvider {
     longitude: number,
     radiusMeters: number = 25000
   ): Promise<OpenAQResult> {
-    const apiKey = process.env.OPENAQ_API_KEY;
+    const apiKey = process.env.OPENAQ_API_KEY?.trim();
 
     const defaultAttribution: SourceAttribution = {
       provider: 'OpenAQ',

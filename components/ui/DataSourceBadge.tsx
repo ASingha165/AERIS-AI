@@ -100,25 +100,53 @@ export function DemonstrationNoticeBanner({ className }: { className?: string })
     );
   }
 
+  const isForecastOnly = data?.status === 'FORECAST_ONLY';
+  const isStationActive = data?.status === 'LIVE_OBSERVATION' || data?.status === 'PARTIAL_OBSERVATION';
+
   return (
     <div
       className={cn(
-        'flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-2.5 rounded-lg bg-[#101C2B]/90 border border-primary/20 backdrop-blur-md shadow-sm text-sm',
+        'flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-2.5 rounded-lg backdrop-blur-md shadow-sm text-sm',
+        isForecastOnly
+          ? 'bg-[#101C2B]/90 border border-secondary/30'
+          : 'bg-[#101C2B]/90 border border-primary/20',
         className
       )}
     >
       <div className="flex items-center gap-2.5 min-w-0">
-        <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
-        <p className="text-xs md:text-sm text-on-surface-variant truncate">
-          <span className="font-bold text-primary uppercase tracking-wider font-heading mr-1.5">
-            Stage 2 Live Integration Active:
-          </span>
-          Dual-source telemetry connected via OpenAQ API v3 & Open-Meteo Copernicus CAMS. CPCB NAQI standard verified.
+        {isForecastOnly ? (
+          <AlertCircle className="w-4 h-4 text-secondary shrink-0" />
+        ) : (
+          <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
+        )}
+        <p className="text-xs md:text-sm text-on-surface-variant">
+          {isForecastOnly ? (
+            <>
+              <span className="font-bold text-secondary uppercase tracking-wider font-heading mr-1.5">
+                Modeled Forecast Fallback (Open-Meteo CAMS):
+              </span>
+              Ground station observations (OpenAQ) are unavailable. Displaying numerical atmospheric dispersion estimates (MODELED_FORECAST) — not physical station measurements.
+            </>
+          ) : isStationActive ? (
+            <>
+              <span className="font-bold text-primary uppercase tracking-wider font-heading mr-1.5">
+                Live Environmental Telemetry Active:
+              </span>
+              Ground station observations (OpenAQ) paired with Open-Meteo Copernicus CAMS forecast. CPCB-methodology applied.
+            </>
+          ) : (
+            <>
+              <span className="font-bold text-primary uppercase tracking-wider font-heading mr-1.5">
+                Connecting Atmospheric Telemetry:
+              </span>
+              Synchronizing Open-Meteo Copernicus CAMS dispersion model and optional OpenAQ ground station feed.
+            </>
+          )}
         </p>
       </div>
       <div className="shrink-0 flex items-center gap-2 font-mono text-xs">
         <span className="px-2 py-0.5 rounded bg-[#142235] text-secondary border border-[#1F334E] text-[11px]">
-          {data?.status || 'CONNECTED'}
+          {isForecastOnly ? 'MODELED_FORECAST' : data?.status || 'CONNECTING'}
         </span>
         <button
           type="button"
