@@ -41,7 +41,8 @@ describe('Gemini Copilot Functional Integration Tests', () => {
     const body = await res.json();
     assert.ok(body.error.includes('GEMINI_API_KEY'));
 
-    process.env.GEMINI_API_KEY = originalKey;
+    if (originalKey === undefined) delete process.env.GEMINI_API_KEY;
+    else process.env.GEMINI_API_KEY = originalKey;
   });
 
   test('Invalid request body returns HTTP 400 with validation details', async () => {
@@ -63,11 +64,9 @@ describe('Gemini Copilot Functional Integration Tests', () => {
     assert.ok(body.details);
   });
 
-  test('Live Gemini 3.5 Flash-Lite generates grounded environmental response', async () => {
-    if (!apiKey) {
-      console.log('Skipping live call: No GEMINI_API_KEY present in .env.local');
-      return;
-    }
+  test('Live Gemini 3.5 Flash-Lite generates grounded environmental response', {
+    skip: !apiKey ? 'Live Gemini smoke test needs GEMINI_API_KEY; not verified by CI' : false,
+  }, async () => {
 
     process.env.GEMINI_API_KEY = apiKey;
     const { POST } = await import('@/app/api/copilot/route');

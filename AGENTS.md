@@ -140,3 +140,10 @@ AERIS-AI is structured into a modular, decoupled architecture:
 - Demonstration pollutant data may render only when explicitly enabled as demo mode.
 - Forecast comparisons are pure, unit-tested, reject missing/negative/non-finite values and require at least three comparable daytime points.
 - Competition rank and score are external outcomes; no score increase is guaranteed by CI or code changes alone.
+
+
+## CI testing integrity — November 25, 2026
+- Unit/API contract tests must be deterministic and not depend on live upstream services.
+- Any Gemini test requiring a real key must be explicitly marked skipped when credentials are missing. Never report skipped provider calls as successful live verification.
+- Validate HTTP 400 for missing/empty coordinates rather than coercing null or empty strings to 0,0.
+- Preserve evidence of CI checks; competition scores are externally determined and may vary between attempts.
