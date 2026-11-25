@@ -1,6 +1,6 @@
 # Stage 3 — Gemini Copilot implementation
 
-**Branch:** `feat/stage-3-gemini-reasoning`  
+**Status:** Merged into `main` in commit `4dd3e90`.  
 **Provider:** Google Gemini 2.5 Flash via Generative Language REST API.
 
 ## Request flow
@@ -23,4 +23,4 @@
 
 ## Verification status
 
-Implementation is present on the feature branch. A live model response requires a valid Gemini API key in the deployment/local server environment. CI and production build results must be checked before merging.
+GitHub Actions passed dependency installation, type-check, unit tests, lint, and production build before merge. A live model response still requires a valid server-side `GEMINI_API_KEY`; live API smoke testing and browser QA remain outstanding.

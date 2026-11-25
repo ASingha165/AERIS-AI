@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CopilotRequestSchema } from '@/lib/copilot/schema';
 import { AirQualityService } from '@/lib/air-quality/services/air-quality-service';
+import { buildGroundingContext } from '@/lib/copilot/grounding';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -8,25 +9,6 @@ export const dynamic = 'force-dynamic';
 const MODEL = 'gemini-2.5-flash';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
-function buildGroundingContext(data: Awaited<ReturnType<typeof AirQualityService.getAirQualityData>>): string {
-  const observed = Object.values(data.observations).filter(Boolean).map((item) =>
-    `- ${item!.pollutant}: ${item!.value} ${item!.unit}; source=${item!.provider}; type=${item!.observationType}; timestamp=${item!.timestamp}; freshness=${item!.freshness}`
-  );
-  const forecast = data.forecast.slice(0, 8).map((point) =>
-    `- ${point.time}: PM2.5=${point.pm25 ?? 'unavailable'} µg/m³; PM10=${point.pm10 ?? 'unavailable'} µg/m³; NO2=${point.no2 ?? 'unavailable'} µg/m³; modeled only`
-  );
-
-  return [
-    `Selected location: ${data.location.name} (${data.location.latitude}, ${data.location.longitude})`,
-    `Overall data status: ${data.status}; freshness: ${data.freshness}`,
-    `CPCB-methodology AQI: ${data.aqi.value ?? 'unavailable'}; category: ${data.aqi.category ?? 'unavailable'}; status: ${data.aqi.status}; reason: ${data.aqi.statusReason}`,
-    'Station observations (only values explicitly marked MEASURED_STATION are physical monitor data):',
-    observed.length ? observed.join('\n') : 'No eligible OpenAQ station observations are currently available.',
-    'Modeled forecast (CAMS/Open-Meteo; never describe as a station measurement):',
-    forecast.length ? forecast.join('\n') : 'No forecast points are available.',
-    'Data sources: ' + (data.sources.map((source) => `${source.provider}: ${source.datasetName} (${source.modelResolution ?? 'station data'})`).join('; ') || 'No source successfully returned data.'),
-  ].join('\n');
-}
 
 export async function POST(request: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY;

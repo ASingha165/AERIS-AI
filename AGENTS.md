@@ -5,7 +5,7 @@
 > **Competition:** Hack2Skill PromptWars Virtual — Challenge 6: Urban Air Quality Assistant  
 > **Target Deadline:** November 29, 2026  
 > **Repository Root:** `D:\Aeris`  
-> **Status:** Stage 2.1 merged; Stage 3 Gemini Copilot implementation under review.
+> **Status:** Stage 2.1 and Stage 3 implementation merged; live Gemini runtime verification pending.
 
 ---
 
@@ -104,7 +104,7 @@ AERIS-AI is structured into a modular, decoupled architecture:
 - **Stage 1 (Complete):** Engineering foundation, Stitch design implementation, route layouts, isolated demonstration datasets.
 - **Stage 2 (Complete):** Live environmental data integration, Open-Meteo CAMS provider, OpenAQ v3 provider, CPCB calculation engine, freshness classifier, `/api/air-quality`, `/api/locations/search`, full unit test suite, and production build verification.
 - **Stage 2.1 (Complete):** Data-integrity hardening merged into `main`; regression and CI checks pass.
-- **Stage 3 (In review):** Gemini 2.5 Flash Copilot route and UI implemented; CI passes. Live API smoke test and browser QA remain.
+- **Stage 3 (Merged; runtime verification pending):** Gemini 2.5 Flash Copilot route and UI merged into `main`; CI passes. Live API smoke test and browser QA remain.
 - **Stage 4 (Pending):** Supabase PostgreSQL Database & Auth.
 - **Stage 5 (Pending):** End-to-End Testing & Production Deployment on Vercel.
 

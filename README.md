@@ -21,7 +21,7 @@ AERIS-AI is an environmental decision-support platform combining outdoor air-qua
 - CPCB-methodology sub-index calculations and explicit insufficient-data states.
 - Location search, freshness metadata, and API-level validation.
 
-## Stage 3 — Gemini Copilot (implementation in review)
+## Stage 3 — Gemini Copilot (merged; runtime verification pending)
 
 - Server-side Gemini 2.5 Flash integration through the Google Generative Language REST API.
 - `POST /api/copilot` validates message, bounded conversation history, and selected coordinates.
@@ -86,6 +86,6 @@ AERIS provides environmental information, not clinical diagnosis or treatment. T
 - [x] Stage 1 — engineering foundation and Stitch-based UI.
 - [x] Stage 2 — OpenAQ, Open-Meteo, CPCB-methodology engine.
 - [x] Stage 2.1 — data-integrity hardening merged into `main`; regression checks pass.
-- [ ] Stage 3 — Gemini Copilot implementation committed; CI passes. Live Gemini API smoke test and browser QA remain.
+- [ ] Stage 3 — Gemini Copilot merged into `main`; CI passes. Live Gemini API smoke test and browser QA remain.
 - [ ] Stage 4 — Supabase persistence and authentication.
 - [ ] Stage 5 — end-to-end QA and production deployment.
