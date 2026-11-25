@@ -14,7 +14,7 @@ import {
   ExternalLink,
   ChevronRight,
 } from 'lucide-react';
-import { DEMO_AIR_QUALITY_READING } from '@/lib/demo-data';
+import { LandingAirSnapshot } from '@/components/landing/LandingAirSnapshot';
 
 export default function LandingPage() {
   return (
@@ -113,33 +113,7 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          {/* Live Atmospheric Telemetry Snapshot Banner */}
-          <div className="mt-14 max-w-3xl mx-auto p-4 rounded-2xl bg-[#142235]/90 border border-[#1F334E] shadow-2xl backdrop-blur-md flex flex-wrap items-center justify-between gap-4 text-left">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-warning/20 border border-warning/40 flex items-center justify-center text-warning font-heading font-bold text-lg">
-                168
-              </div>
-              <div>
-                <span className="font-heading text-xs font-bold text-on-surface block">
-                  Kolkata, WB — Park Street Ward 63
-                </span>
-                <span className="text-[11px] font-mono text-warning">
-                  Unhealthy for Sensitive Groups • Primary: PM2.5
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 text-xs font-mono">
-              <div className="px-3 py-1.5 rounded-lg bg-[#101C2B] border border-[#1F334E]">
-                <span className="text-outline">PM2.5:</span>{' '}
-                <span className="text-danger font-bold">88.4 µg/m³</span>
-              </div>
-              <div className="px-3 py-1.5 rounded-lg bg-[#101C2B] border border-[#1F334E]">
-                <span className="text-outline">Safe Window:</span>{' '}
-                <span className="text-primary font-bold">13:30 - 15:30</span>
-              </div>
-            </div>
-          </div>
+          <LandingAirSnapshot />
         </div>
       </section>
 
@@ -238,7 +212,7 @@ export default function LandingPage() {
                   Air Intelligence Dashboard
                 </h3>
                 <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">
-                  Real-time CPCB and OpenAQ-grounded telemetry for PM2.5, PM10, NO2, and O3 with 24-hour predictive horizon models.
+                  Open-Meteo CAMS modeled forecasts with optional OpenAQ monitoring-station observations and clear source attribution.
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-[#1F334E]/60 flex items-center justify-between text-xs font-mono text-primary">
