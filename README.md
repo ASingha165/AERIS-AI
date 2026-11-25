@@ -32,6 +32,14 @@ AERIS-AI is an environmental decision-support platform combining outdoor air-qua
 
 **Verification:** GitHub Actions has passed dependency installation, type-check, unit tests, lint, and production build on the feature branch. A real Gemini response still requires a valid server-side `GEMINI_API_KEY`; live API smoke testing and browser QA remain outstanding.
 
+## Stage 4 — Supabase persistence foundation (in review)
+
+- Initial PostgreSQL migration for user profiles, non-clinical household configuration, saved locations, preferences, and schedules.
+- Row Level Security and owner-scoped foreign keys are defined for all cloud tables.
+- Settings preferences now persist in the current browser with runtime schema validation.
+- Supabase project setup, migration execution, Auth, and cloud synchronization still require a real Supabase project and end-to-end verification.
+- Sensitive household member health details are intentionally excluded from cloud storage until explicit consent and privacy controls are implemented.
+
 ## Setup
 
 Requirements: Node.js 20+ and npm.
@@ -87,5 +95,5 @@ AERIS provides environmental information, not clinical diagnosis or treatment. T
 - [x] Stage 2 — OpenAQ, Open-Meteo, CPCB-methodology engine.
 - [x] Stage 2.1 — data-integrity hardening merged into `main`; regression checks pass.
 - [ ] Stage 3 — Gemini Copilot merged into `main`; CI passes. Live Gemini API smoke test and browser QA remain.
-- [ ] Stage 4 — Supabase persistence and authentication.
+- [ ] Stage 4 — Supabase schema foundation in review; apply migration, configure Auth, and verify RLS with a real project.
 - [ ] Stage 5 — end-to-end QA and production deployment.
