@@ -127,7 +127,7 @@ export default function SettingsPage() {
                   name="sourcePriority"
                   value="cpcb-first"
                   checked={dataSourcePriority === 'cpcb-first'}
-                  onChange={(e) => setDataSourcePriority(e.target.value as 'cpcb-first' | 'open-meteo-blend')
+                  onChange={(e) => setDataSourcePriority(e.target.value as 'cpcb-first' | 'open-meteo-blend')}
                   className="mt-1 accent-primary-container"
                 />
                 <div>
@@ -146,7 +146,7 @@ export default function SettingsPage() {
                   name="sourcePriority"
                   value="open-meteo-blend"
                   checked={dataSourcePriority === 'open-meteo-blend'}
-                  onChange={(e) => setDataSourcePriority(e.target.value)}
+                  onChange={(e) => setDataSourcePriority(e.target.value as 'cpcb-first' | 'open-meteo-blend')}
                   className="mt-1 accent-primary-container"
                 />
                 <div>

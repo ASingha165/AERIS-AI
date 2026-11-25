@@ -32,17 +32,18 @@
 ---
 
 ## Stage 2: Environmental API Integration (Complete)
-- [ ] Connect OpenAQ API v3 client with regional bounding box for Kolkata and Mumbai.
-- [ ] Implement Open-Meteo Air Quality client for boundary layer height and hourly forecasts.
-- [ ] Create Next.js API route `/api/telemetry` with 15-minute SWR caching.
-- [ ] Implement fallback to historical benchmarks during station downtime.
+- [x] Integrate OpenAQ API v3 station observations with radius-based discovery and graceful fallback.
+- [x] Integrate Open-Meteo Air Quality API with CAMS Global modeled forecasts.
+- [x] Create `/api/air-quality` with validated query parameters and cache headers.
+- [x] Preserve explicit unavailable/forecast-only states when station observations are unavailable.
 
 ---
 
 ## Stage 3: Google Gemini API Copilot Integration (Merged; runtime verification pending)
-- [ ] Implement Next.js API route `/api/copilot` using `@google/genai` SDK.
-- [ ] System prompt injection with CPCB NAQI guidelines, WHO targets, and household profile context.
-- [ ] Structured JSON output for strategic recommendations and projected inhalation curves.
+- [x] Implement `/api/copilot` using the Gemini Generative Language REST API and Gemini 3.5 Flash-Lite.
+- [x] Ground responses in current environmental context and preserve measured-station versus modeled-forecast provenance.
+- [x] Add Zod request validation and environmental/medical safety instructions.
+- [ ] Complete live Gemini API-key smoke testing and browser QA.
 
 ---
 
