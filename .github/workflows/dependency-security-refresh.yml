@@ -31,7 +31,7 @@ jobs:
 
       - name: Pin patched PostCSS for all dependency paths
         run: |
-          npm pkg set 'overrides.postcss=8.5.33'
+          npm pkg set 'devDependencies.postcss=8.5.33' 'overrides.postcss=8.5.33'
           npm install --no-fund --no-progress
 
       - name: Apply non-breaking dependency security fixes
