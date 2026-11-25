@@ -11,11 +11,6 @@ const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MO
 
 
 export async function POST(request: NextRequest) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json({ error: 'The AERIS reasoning service is not configured. Add GEMINI_API_KEY to the server environment.' }, { status: 503 });
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -26,6 +21,11 @@ export async function POST(request: NextRequest) {
   const parsed = CopilotRequestSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid Copilot request.', details: parsed.error.flatten() }, { status: 400 });
+  }
+
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return NextResponse.json({ error: 'The AERIS reasoning service is not configured. Add GEMINI_API_KEY to the server environment.' }, { status: 503 });
   }
 
   const { message, history, location } = parsed.data;
