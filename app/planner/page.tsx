@@ -1,60 +1,56 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { ShieldAlert } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { ActivitySelector } from '@/components/planner/ActivitySelector';
-import { PollutionTimeline } from '@/components/planner/PollutionTimeline';
-import { ActivityRecommendation } from '@/components/planner/ActivityRecommendation';
-import { DEMO_ROUTINE_ACTIVITIES, DEMO_DIURNAL_FORECAST } from '@/lib/demo-data';
-import { RoutineActivity } from '@/types/planner';
-import { ShieldAlert } from 'lucide-react';
+import { useAirQuality } from '@/lib/context/AirQualityContext';
+import { DEMO_ROUTINE_ACTIVITIES } from '@/lib/demo-data';
+import type { RoutineActivity } from '@/types/planner';
 
+const kolkataDate = (date: Date) =>
+  new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Kolkata' }).format(date);
+
+/** Relative PM2.5 forecast comparison. Not a health/safety certification. */
 export default function PlannerPage() {
   const [selectedActivity, setSelectedActivity] = useState<RoutineActivity>(DEMO_ROUTINE_ACTIVITIES[0]);
   const [targetDate, setTargetDate] = useState<'today' | 'tomorrow'>('today');
-  const [durationMinutes, setDurationMinutes] = useState<number>(45);
+  const [durationMinutes, setDurationMinutes] = useState(45);
+  const { data, isDemoMode, isLoading, error, selectedLocation } = useAirQuality();
+
+  const today = kolkataDate(new Date());
+  const tomorrow = kolkataDate(new Date(Date.now() + 86400000));
+  const date = targetDate === 'today' ? today : tomorrow;
+
+  const candidates = useMemo(() => {
+    if (!data || isDemoMode) return [];
+    return data.forecast
+      .filter(point => point.time.slice(0, 10) === date)
+      .filter(point => Number.isFinite(point.pm25) && point.pm25 !== null && point.pm25 >= 0)
+      .filter(point => point.hour >= 6 && point.hour <= 21)
+      .map(point => ({ time: point.time, hour: point.hour, pm25: point.pm25 as number }))
+      .sort((a, b) => a.pm25 - b.pm25 || a.hour - b.hour);
+  }, [data, date, isDemoMode]);
+
+  const preferred = candidates.length >= 3 ? candidates[0] : null;
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 font-heading text-[10px] text-secondary uppercase tracking-widest mb-1">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              <span>Micro-Atmospheric Schedule Optimization • WRF-Chem Dispersion Engine</span>
-            </div>
-            <h1 className="font-heading text-2xl lg:text-4xl text-on-surface font-bold tracking-tight">
-              Plan Around the Air<span className="text-primary-container">.</span>
-            </h1>
-            <p className="text-xs sm:text-sm text-on-surface-variant max-w-2xl mt-1">
-              Find better moments for everyday activities. AERIS models meteorological boundary shifts to shield respiratory pathways.
-            </p>
-          </div>
+        <header>
+          <p className="text-xs font-semibold uppercase tracking-widest text-secondary">CAMS modeled forecast comparison</p>
+          <h1 className="mt-2 text-3xl font-bold text-on-surface">Plan Around the Air.</h1>
+          <p className="mt-2 text-sm text-on-surface-variant">
+            Compare relative modeled PM2.5 concentrations for {selectedLocation.name}. No hour is guaranteed safe.
+          </p>
+        </header>
 
-          <div className="flex items-center gap-4 bg-[#142235] px-4 py-2 rounded-xl border border-[#1F334E] shadow-sm text-xs">
-            <div className="flex flex-col text-right">
-              <span className="font-heading text-[9px] uppercase text-outline">Boundary Layer (PBLH)</span>
-              <span className="font-heading text-sm text-primary font-bold">580 m</span>
-            </div>
-            <div className="h-6 w-px bg-[#1F334E]" />
-            <div className="flex flex-col text-right">
-              <span className="font-heading text-[9px] uppercase text-outline">Surface Inversion</span>
-              <span className="font-mono text-danger font-bold">Active (Strong)</span>
-            </div>
-          </div>
+        <div className="flex items-start gap-3 rounded-xl border border-[#1F334E] bg-[#101C2B] p-4 text-xs text-on-surface-variant">
+          <ShieldAlert className="h-5 w-5 shrink-0 text-warning" aria-hidden />
+          <p>Open-Meteo CAMS modeled atmospheric values are not local ground measurements. This tool does not calculate inhaled dose, official AQI, or individual clinical risk. Follow relevant public-health advice.</p>
         </div>
 
-        {/* Forecast-Based Relative Windows Disclaimer */}
-        <div className="rounded-xl bg-[#101C2B] p-4 border border-[#1F334E] shadow-surface-card flex items-start gap-3">
-          <ShieldAlert className="w-5 h-5 text-secondary shrink-0 mt-0.5" />
-          <div className="text-xs text-on-surface-variant leading-relaxed">
-            <strong className="text-on-surface font-semibold">Forecast-Based Relative Windows:</strong> AERIS calculates comparative pollution windows based on meteorological dispersion models. No outdoor exposure window during seasonal high-AQI periods is guaranteed completely risk-free; always tailor decisions to personal pulmonary sensitivity and clinical history.
-          </div>
-        </div>
-
-        {/* 2-Column Split: Activity Config on Left, Recommendation & Timeline on Right */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <ActivitySelector
               activities={DEMO_ROUTINE_ACTIVITIES}
@@ -66,22 +62,30 @@ export default function PlannerPage() {
               onChangeDuration={setDurationMinutes}
             />
           </div>
-
-          <div className="lg:col-span-8 space-y-6">
-            <ActivityRecommendation
-              activity={selectedActivity}
-              durationMinutes={durationMinutes}
-            />
-
-            <PollutionTimeline
-              forecastData={DEMO_DIURNAL_FORECAST}
-              optimalStartHour={13.5}
-              optimalEndHour={16}
-            />
-          </div>
+          <section aria-label="Compared forecast hours" className="space-y-4 rounded-2xl border border-[#1F334E] bg-[#142235] p-6 lg:col-span-8">
+            <h2 className="text-lg font-semibold text-on-surface">Relative forecast outlook · {date}</h2>
+            <p role="status" className="text-sm text-on-surface-variant">
+              {isDemoMode ? 'Demonstration mode is active. Live forecast suggestions are unavailable.'
+                : isLoading ? 'Loading modeled forecast…'
+                : error ? 'Forecast request failed; no activity period can be recommended.'
+                : preferred ? `Comparatively lower modeled PM2.5 at ${preferred.hour.toString().padStart(2, '0')}:00 (forecast local time): ${preferred.pm25.toFixed(1)} µg/m³.`
+                : 'Insufficient comparable forecast data for this day. No period recommended.'}
+            </p>
+            <p className="text-xs text-on-surface-variant">For {selectedActivity.name} ({durationMinutes} minutes). Lowest modeled concentration does not mean a safe time, and does not quantify exposure reduction.</p>
+            {candidates.length >= 3 && (
+              <div className="grid gap-3 sm:grid-cols-3">
+                {candidates.slice(0, 3).map(point => (
+                  <div key={point.time} className="rounded-xl border border-[#1F334E] bg-[#101C2B] p-4">
+                    <p className="text-sm font-semibold text-on-surface">{point.hour.toString().padStart(2, '0')}:00</p>
+                    <p className="mt-2 text-xl font-bold text-primary">{point.pm25.toFixed(1)} <span className="text-xs font-normal">µg/m³ PM2.5</span></p>
+                    <p className="mt-1 text-[11px] text-on-surface-variant">CAMS atmospheric model</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
         </div>
       </div>
     </DashboardLayout>
   );
 }
-
